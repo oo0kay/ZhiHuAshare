@@ -103,7 +103,7 @@ def annotate_single_markdown(
                 body_text = parts[2].strip()
 
         # 查找图片路径
-        images_dir = md_filepath.parent / "images"
+        images_dir = (md_filepath.parent.parent / "images") if md_filepath.parent.name == "temp" else (md_filepath.parent / "images")
         img_matches = re.findall(r'!\[.*?\]\(\./images/([^\)]+)\)', body_text)
 
         contents = []
@@ -236,9 +236,11 @@ def run_annotation_pipeline(
         logger.error(f"找不到输出目录: {daily_out_dir}")
         sys.exit(1)
 
-    md_files = sorted(list(daily_out_dir.glob("answer_*.md")))
+    temp_dir = daily_out_dir / "temp"
+    search_dir = temp_dir if temp_dir.exists() else daily_out_dir
+    md_files = sorted(list(search_dir.glob("answer_*.md"))) or sorted(list(daily_out_dir.rglob("answer_*.md")))
     if not md_files:
-        logger.warning(f"在 {daily_out_dir} 下未找到待批注的 answer_*.md 文件。")
+        logger.warning(f"在 {daily_out_dir} (含 temp/ 子目录) 下未找到待批注的 answer_*.md 文件。")
         return
 
     logger.info(f"找到 {len(md_files)} 个 Markdown 文件准备进行 Gemini 批注...")
