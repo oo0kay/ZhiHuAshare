@@ -273,6 +273,17 @@ def annotate_single_markdown(
         return False, None
 
 
+def save_last_error(msg: str, output_dir: str = "output"):
+    try:
+        out_base_path = Path(output_dir) if Path(output_dir).is_absolute() else WORK_DIR / output_dir
+        out_base_path.mkdir(parents=True, exist_ok=True)
+        err_file = out_base_path / "last_error.txt"
+        with open(err_file, "w", encoding="utf-8") as f:
+            f.write(msg)
+    except Exception:
+        pass
+
+
 def run_annotation_pipeline(
     api_key: str,
     target_date_str: str | None = None,
@@ -295,7 +306,9 @@ def run_annotation_pipeline(
             logger.info(f"未直接找到 {daily_out_dir}，自动平滑定位到最新产物目录: {found_dir}")
             daily_out_dir = found_dir
         else:
-            logger.error(f"找不到输出目录: {daily_out_dir}")
+            err_msg = f"【Step 2 Gemini 批注失败】找不到待批注输出目录: {daily_out_dir}"
+            logger.error(err_msg)
+            save_last_error(err_msg, output_dir)
             sys.exit(1)
 
     temp_dir = daily_out_dir / "temp"
