@@ -1,0 +1,82 @@
+name: Daily Zhihu A-Share Automated Learner & Push
+
+on:
+  schedule:
+    # UTC 10:00 = 北京时间 18:00 (每周一至周五)
+    - cron: '0 10 * * 1-5'
+  workflow_dispatch: # 支持 GitHub 网页后台手动点击运行测试
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          uv sync
+
+      - name: Step 1 - Fetch Zhihu Answers (Top 15 Upvoted)
+        id: fetch
+        env:
+          ZHIHU_COOKIE: ${{ secrets.ZHIHU_COOKIE }}
+        run: |
+          uv run python scripts/fetch_zhihu.py --cookie "$ZHIHU_COOKIE" --sort upvoted_count --limit 15
+
+      - name: Step 2 - Gemini AI Causality & Multimodal Annotation
+        id: annotate
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          uv run python scripts/annotate_gemini.py --api-key "$GEMINI_API_KEY" --model "gemini-3.7-flash"
+
+      - name: Step 3 - Compile Geek HTML Dashboard & Cleanup MD
+        id: compile
+        run: |
+          uv run python scripts/fetch_zhihu.py --compile
+
+      - name: Step 4 - Deploy Single-Page Dashboard to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
+
+      - name: Step 5 - Send Success WeChat Notification
+        if: success()
+        env:
+          SERVERCHAN_SENDKEY: ${{ secrets.SERVERCHAN_SENDKEY }}
+          WXPUSHER_APP_TOKEN: ${{ secrets.WXPUSHER_APP_TOKEN }}
+          WXPUSHER_UIDS: ${{ secrets.WXPUSHER_UIDS }}
+          WXPUSHER_TOPICS: ${{ secrets.WXPUSHER_TOPICS }}
+        run: |
+          OWNER="${{ github.repository_owner }}"
+          REPO="${{ github.event.repository.name }}"
+          PAGES_URL="https://${OWNER}.github.io/${REPO}/"
+          uv run python scripts/notify_wechat.py --status success --pages-url "$PAGES_URL"
+
+      - name: Step 6 - Send Cookie Expiration & Failure Alert to WeChat
+        if: failure()
+        env:
+          SERVERCHAN_SENDKEY: ${{ secrets.SERVERCHAN_SENDKEY }}
+          WXPUSHER_APP_TOKEN: ${{ secrets.WXPUSHER_APP_TOKEN }}
+          WXPUSHER_UIDS: ${{ secrets.WXPUSHER_UIDS }}
+          WXPUSHER_TOPICS: ${{ secrets.WXPUSHER_TOPICS }}
+        run: |
+          uv run python scripts/notify_wechat.py --status error --error-message "知乎抓取或 Gemini 批注失败。可能 ZHIHU_COOKIE 已过期或接口遭遇限流，请登录 GitHub 仓库更新 ZHIHU_COOKIE Secrets。"
