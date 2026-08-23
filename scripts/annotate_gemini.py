@@ -265,12 +265,12 @@ def annotate_single_markdown(
         with open(md_filepath, "w", encoding="utf-8") as f:
             f.write(final_file_content)
 
-        logger.info(f"成功为 {md_filepath.name} 注入 Gemini 因果批注！")
-        return True
+        logger.info(f"成功为 {md_filepath.name} 注入 Gemini 因果批注！使用模型: {current_model}")
+        return True, current_model
 
     except Exception as e:
         logger.error(f"处理 {md_filepath.name} 出现异常: {e}", exc_info=True)
-        return False
+        return False, None
 
 
 def run_annotation_pipeline(
@@ -325,6 +325,7 @@ def run_annotation_pipeline(
     from concurrent.futures import ThreadPoolExecutor, as_completed
 
     success_count = 0
+    model_stats = {}
     max_workers = min(len(md_files), 3)  # 控制 3 线程并发，结合 3 次重试，既极速又不超限
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         future_to_md = {
@@ -334,13 +335,15 @@ def run_annotation_pipeline(
         for future in as_completed(future_to_md):
             mf = future_to_md[future]
             try:
-                ok = future.result()
-                if ok:
+                ok, used_model = future.result()
+                if ok and used_model:
                     success_count += 1
+                    model_stats[used_model] = model_stats.get(used_model, 0) + 1
             except Exception as e:
                 logger.error(f"并发处理 {mf.name} 异常: {e}")
 
-    logger.info(f"Gemini API 批注完成: {success_count}/{len(md_files)} 个文件成功覆写。")
+    stats_str = ", ".join([f"{m}: {c}篇" for m, c in model_stats.items()]) if model_stats else "无"
+    logger.info(f"🎉 Gemini API 批注完成: {success_count}/{len(md_files)} 个文件成功覆写！AI模型调用分布: [{stats_str}]")
 
 
 if __name__ == "__main__":
