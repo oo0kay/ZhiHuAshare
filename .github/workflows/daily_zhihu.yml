@@ -73,10 +73,21 @@ jobs:
           PAGES_URL="https://${OWNER}.github.io/${REPO}/"
           uv run python scripts/notify_bark.py --status success --pages-url "$PAGES_URL"
 
-      - name: Step 6 - Send Cookie Expiration & Failure Alert to Bark
+      - name: Step 6 - Send Precision Failure Alert to Bark
         if: failure()
         env:
           BARK_KEY: ${{ secrets.BARK_KEY }}
           BARK_SERVER: ${{ secrets.BARK_SERVER }}
+          FETCH_OUTCOME: ${{ steps.fetch.outcome }}
+          ANNOTATE_OUTCOME: ${{ steps.annotate.outcome }}
+          COMPILE_OUTCOME: ${{ steps.compile.outcome }}
         run: |
-          uv run python scripts/notify_bark.py --status error --error-message "知乎抓取或 Gemini 批注失败。可能 ZHIHU_COOKIE 已过期或接口遭遇限流，请登录 GitHub 仓库更新 ZHIHU_COOKIE Secrets。"
+          ERROR_MSG="工作流未通过。"
+          if [ "$FETCH_OUTCOME" = "failure" ]; then
+            ERROR_MSG="【Step 1 - 知乎抓取失败】可能 ZHIHU_COOKIE 已过期或接口遭遇限流，请检测 Cookie。"
+          elif [ "$ANNOTATE_OUTCOME" = "failure" ]; then
+            ERROR_MSG="【Step 2 - Gemini AI 批注失败】Gemini API Key 可能无效、或请求超出模型每日额度。"
+          elif [ "$COMPILE_OUTCOME" = "failure" ]; then
+            ERROR_MSG="【Step 3 - HTML 仪表盘编译失败】Markdown 格式解析或 HTML 模板构建异常。"
+          fi
+          uv run python scripts/notify_bark.py --status error --error-message "$ERROR_MSG"
