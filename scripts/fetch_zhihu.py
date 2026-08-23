@@ -1159,7 +1159,7 @@ def generate_index_dashboard(daily_out_dir: Path, articles_meta: list[dict], dat
     history_selector_html = f"""
     <div class="dash-history-select">
         <label for="history-select" style="font-size:0.85rem;color:var(--text-secondary);margin-right:0.3rem;">📅 历史盘后日历:</label>
-        <select id="history-select" onchange="if(this.value) location.href='../' + this.value + '/index.html'" style="padding:0.25rem 0.6rem;border-radius:6px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-primary);font-size:0.85rem;cursor:pointer;">
+        <select id="history-select" onchange="switchDashboardDate(this.value)" style="padding:0.25rem 0.6rem;border-radius:6px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-primary);font-size:0.85rem;cursor:pointer;">
             {history_options_html}
         </select>
     </div>
@@ -1610,6 +1610,16 @@ def generate_index_dashboard(daily_out_dir: Path, articles_meta: list[dict], dat
         </div>
     </div>
     <script>
+        function switchDashboardDate(targetDate) {{
+            if (!targetDate) return;
+            var currentPath = window.location.pathname;
+            if (new RegExp('\\/\\d{8}\\/').test(currentPath)) {{
+                window.location.href = '../' + targetDate + '/index.html';
+            }} else {{
+                window.location.href = './' + targetDate + '/index.html';
+            }}
+        }}
+
         function copyQId(qId) {{
             if (!qId) return;
             navigator.clipboard.writeText(qId).then(() => {{
