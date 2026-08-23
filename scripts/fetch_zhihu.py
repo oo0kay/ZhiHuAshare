@@ -1131,6 +1131,25 @@ def generate_index_dashboard(daily_out_dir: Path, articles_meta: list[dict], dat
         </div>
         """
 
+    # 动态构建历史盘后日历下拉菜单
+    base_dir = daily_out_dir.parent
+    history_options_html = ""
+    if base_dir.exists():
+        for d in sorted([p for p in base_dir.iterdir() if p.is_dir() and re.match(r'^\d{8}$', p.name)], key=lambda x: x.name, reverse=True):
+            d_name = d.name
+            d_fmt = f"{d_name[:4]}年{d_name[4:6]}月{d_name[6:]}日"
+            selected = "selected" if d_name == date_compact else ""
+            history_options_html += f'<option value="{d_name}" {selected}>{d_fmt}</option>'
+
+    history_selector_html = f"""
+    <div class="dash-history-select">
+        <label for="history-select" style="font-size:0.85rem;color:var(--text-secondary);margin-right:0.3rem;">📅 历史盘后日历:</label>
+        <select id="history-select" onchange="if(this.value) location.href='../' + this.value + '/index.html'" style="padding:0.25rem 0.6rem;border-radius:6px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-primary);font-size:0.85rem;cursor:pointer;">
+            {history_options_html}
+        </select>
+    </div>
+    """ if history_options_html else ""
+
     dashboard_html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -1188,10 +1207,17 @@ def generate_index_dashboard(daily_out_dir: Path, articles_meta: list[dict], dat
             box-shadow: var(--card-shadow);
             border: 1px solid var(--border-color);
         }}
+        .dash-header-top {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }}
         .dash-header h1 {{
             font-size: 1.5rem;
             font-weight: 600;
-            margin: 0 0 0.5rem 0;
+            margin: 0;
             color: var(--text-primary);
         }}
         .dash-meta {{
@@ -1200,6 +1226,7 @@ def generate_index_dashboard(daily_out_dir: Path, articles_meta: list[dict], dat
             display: flex;
             align-items: center;
             gap: 1.25rem;
+            margin-top: 0.75rem;
         }}
         .dash-grid {{
             display: flex;
@@ -1357,18 +1384,15 @@ def generate_index_dashboard(daily_out_dir: Path, articles_meta: list[dict], dat
             left: 50%;
             transform: translateX(-50%);
             width: max-content;
-            max-width: min(280px, 80vw);
-            white-space: normal;
-            word-break: break-word;
-            overflow-wrap: break-word;
+            max-width: 260px;
             background: var(--text-primary);
             color: var(--card-bg);
             padding: 0.5rem 0.75rem;
-            border-radius: 6px;
+            border-radius: 4px;
             font-size: 0.8rem;
             line-height: 1.4;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100;
             pointer-events: none;
             opacity: 0;
             visibility: hidden;
@@ -1410,23 +1434,24 @@ def generate_index_dashboard(daily_out_dir: Path, articles_meta: list[dict], dat
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-top: 1rem;
-            padding-top: 0.75rem;
+            margin-top: 1.25rem;
+            padding-top: 0.85rem;
             border-top: 1px solid var(--border-color);
         }}
         .btn-toggle-expand {{
             background: var(--zhihu-blue-bg);
             color: var(--zhihu-blue);
-            border: none;
-            padding: 0.4rem 0.85rem;
-            border-radius: 4px;
+            border: 1px solid rgba(5, 109, 232, 0.2);
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
             font-size: 0.85rem;
             font-weight: 500;
             cursor: pointer;
-            transition: background 0.2s ease;
+            transition: all 0.2s ease;
         }}
         .btn-toggle-expand:hover {{
-            background: rgba(5, 109, 232, 0.15);
+            background: var(--zhihu-blue);
+            color: #ffffff;
         }}
         .btn-zhihu {{
             font-size: 0.85rem;
@@ -1478,25 +1503,19 @@ def generate_index_dashboard(daily_out_dir: Path, articles_meta: list[dict], dat
             margin-top: 0.75rem;
         }}
         .dash-comment-item {{
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
+            background: var(--bg-color);
+            padding: 0.6rem 0.85rem;
             border-radius: 6px;
-            padding: 0.65rem 0.85rem;
             font-size: 0.85rem;
         }}
         .dash-comment-header {{
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.35rem;
-            font-size: 0.8rem;
+            gap: 0.4rem;
+            margin-bottom: 0.3rem;
+            font-size: 0.78rem;
         }}
         .dash-comment-avatar {{
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: var(--zhihu-blue);
-            color: #ffffff;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
