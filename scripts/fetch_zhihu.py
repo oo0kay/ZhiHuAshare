@@ -1399,21 +1399,25 @@ def generate_index_dashboard(daily_out_dir: Path, articles_meta: list[dict], dat
             left: 50%;
             transform: translateX(-50%);
             width: max-content;
-            max-width: 260px;
+            max-width: min(280px, 80vw);
+            white-space: normal;
+            word-break: break-word;
+            overflow-wrap: break-word;
             background: var(--text-primary);
             color: var(--card-bg);
-            padding: 0.5rem 0.75rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            line-height: 1.4;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 100;
+            padding: 0.6rem 0.85rem;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            line-height: 1.5;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            z-index: 1000;
             pointer-events: none;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.15s ease;
+            transition: opacity 0.2s ease, transform 0.2s ease;
         }}
-        .inline-note-term:hover .note-tooltip {{
+        .inline-note-term:hover .note-tooltip,
+        .inline-note-term.active .note-tooltip {{
             opacity: 1;
             visibility: visible;
         }}
@@ -1660,9 +1664,7 @@ def generate_index_dashboard(daily_out_dir: Path, articles_meta: list[dict], dat
             }}
         }}
 
-        document.addEventListener('mouseover', function(e) {{
-            const term = e.target.closest('.inline-note-term');
-            if (!term) return;
+        function adjustTooltipPosition(term) {{
             const tooltip = term.querySelector('.note-tooltip');
             if (!tooltip) return;
 
@@ -1679,6 +1681,22 @@ def generate_index_dashboard(daily_out_dir: Path, articles_meta: list[dict], dat
                 tooltip.style.left = 'auto';
                 tooltip.style.right = '0';
                 tooltip.style.transform = 'translateX(0)';
+            }}
+        }}
+
+        document.addEventListener('mouseover', function(e) {{
+            const term = e.target.closest('.inline-note-term');
+            if (term) adjustTooltipPosition(term);
+        }});
+
+        document.addEventListener('click', function(e) {{
+            const term = e.target.closest('.inline-note-term');
+            document.querySelectorAll('.inline-note-term.active').forEach(t => {{
+                if (t !== term) t.classList.remove('active');
+            }});
+            if (term) {{
+                term.classList.toggle('active');
+                adjustTooltipPosition(term);
             }}
         }});
 
