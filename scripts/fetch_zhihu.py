@@ -209,8 +209,8 @@ class ZhihuApiClient:
             resp = self.session.get(url, params=params, timeout=15)
             if resp.status_code == 200:
                 return resp.json().get("data", []), None
-            elif resp.status_code in (401, 403):
-                err = f"知乎 API 拒绝访问 (HTTP {resp.status_code})。请确认已在环境变量或命令行传入有效 z_c0 Cookie。"
+            elif resp.status_code in (400, 401, 403):
+                err = f"知乎 API 拒绝访问 (HTTP {resp.status_code})。知乎搜索接口依赖有效登录凭证，请检查并更新 GitHub Secrets 中的 ZHIHU_COOKIE (需包含有效 z_c0)。"
                 logger.error(err)
                 return [], err
             else:
@@ -1860,6 +1860,24 @@ def run_compiler_pipeline(target_date_str: str | None = None, base_output_dir: s
         articles_meta.append(meta)
 
     index_path_str = generate_index_dashboard(daily_out_dir, articles_meta, date_formatted, date_compact)
+
+    # 同步复制最新的 index.html 与 images/ 到 output 根目录，并生成 .nojekyll
+    try:
+        import shutil
+        root_index = out_base_path / "index.html"
+        root_images = out_base_path / "images"
+        nojekyll_file = out_base_path / ".nojekyll"
+
+        shutil.copy2(index_path_str, root_index)
+        if (daily_out_dir / "images").exists():
+            if root_images.exists():
+                shutil.rmtree(root_images, ignore_errors=True)
+            shutil.copytree(daily_out_dir / "images", root_images)
+        with open(nojekyll_file, "w", encoding="utf-8") as f:
+            f.write("")
+        logger.info(f"已自动更新根目录直达仪表盘: {root_index} 及 .nojekyll 文件。")
+    except Exception as e:
+        logger.warning(f"复制根目录最新仪表盘异常: {e}")
 
     # 自动清理 temp/ 中间过程态目录
     if temp_dir.exists():
