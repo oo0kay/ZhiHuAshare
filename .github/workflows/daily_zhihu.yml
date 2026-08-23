@@ -6,6 +6,9 @@ on:
     - cron: '0 10 * * 1-5'
   workflow_dispatch: # 支持 GitHub 网页后台手动点击运行测试
 
+env:
+  TZ: Asia/Shanghai
+
 permissions:
   contents: write
   pages: write
