@@ -133,8 +133,8 @@ def main():
             f"**完成时间**：{datetime.now(tz_beijing).strftime('%Y-%m-%d %H:%M:%S')}\n"
             f"已自动按点赞数为您筛选全网 Top 15 知乎高赞回答，并完成 Gemini AI 图文因果拆解与避坑指南批注。\n\n"
         )
-        if args.pages-url:
-            content += f"👉 **点击在线仪表盘查看**：[点击打开]({args.pages-url})"
+        if args.pages_url:
+            content += f"👉 **点击在线仪表盘查看**：[点击打开]({args.pages_url})"
 
         push_notification(title, content, target_url=args.pages_url)
 
