@@ -99,19 +99,13 @@ def main():
     date_str = args.date or datetime.now(tz_beijing).strftime("%Y-%m-%d")
 
     if args.status == "error":
-        title = f"⚠️ 知乎 A 股构建失败 ({date_str})"
-        body = (
-            f"构建时间：{datetime.now(tz_beijing).strftime('%H:%M:%S')}\n"
-            f"异常信息：{args.error_message or '可能知乎 Cookie (z_c0) 已过期或遭遇接口限流。'}\n"
-            f"提示：请登录知乎重新获取 z_c0，并在 GitHub 仓库 Secrets 中更新 ZHIHU_COOKIE。"
-        )
+        title = f"⚠️ A股解析构建失败 ({date_str})"
+        err_msg = args.error_message.strip() if args.error_message else "请检查 GitHub Actions 运行日志。"
+        body = f"时间：{datetime.now(tz_beijing).strftime('%H:%M:%S')}\n原因：{err_msg}"
         send_bark_notification(bark_key, title, body, bark_server=bark_server, is_error=True)
     else:
-        title = f"📈 今日 A 股知乎热议全景解析已完成 ({date_str})"
-        body = (
-            f"已按点赞数为您筛选全网 Top 15 知乎高赞回答，并完成 Gemini 3.7 AI 图文因果拆解。\n"
-            f"点击此通知可直接打开极客仪表盘一屏阅读。"
-        )
+        title = f"📈 今日 A股热议全景 ({date_str})"
+        body = "点击直接查看 ➔"
         send_bark_notification(bark_key, title, body, target_url=args.pages_url, bark_server=bark_server, is_error=False)
 
 
