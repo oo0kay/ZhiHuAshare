@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知乎 A 股热议全景 (2026年08月23日)</title>
+    <!-- KaTeX 数学公式渲染支持 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\(', right: '\\)', display: false}, {left: '\\[', right: '\\]', display: true}]});"></script>
+    <style>
+        :root {
+            --bg-color: #f6f6f6;
+            --card-bg: #ffffff;
+            --text-primary: #121212;
+            --text-secondary: #8590a6;
+            --zhihu-blue: #056de8;
+            --zhihu-blue-hover: #0056b3;
+            --zhihu-blue-bg: rgba(5, 109, 232, 0.08);
+            --border-color: #ebebeb;
+            --card-shadow: 0 1px 3px rgba(18, 18, 18, 0.1);
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #121212;
+                --card-bg: #1e1e1e;
+                --text-primary: #f0f0f0;
+                --text-secondary: #8590a6;
+                --zhihu-blue: #3b82f6;
+                --zhihu-blue-hover: #60a5fa;
+                --zhihu-blue-bg: rgba(59, 130, 246, 0.12);
+                --border-color: #2e2e2e;
+                --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+            }
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.67;
+            margin: 0;
+            padding: 1.5rem 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .dash-header {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+        }
+        .dash-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+            color: var(--text-primary);
+        }
+        .dash-meta {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+        .dash-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+        .dash-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem 2rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+        }
+        .dash-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.88rem;
+        }
+        .dash-author-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--zhihu-blue-bg);
+            color: var(--zhihu-blue);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+        .dash-author { color: var(--text-primary); font-weight: 600; }
+        .dash-time { color: var(--text-secondary); }
+        .dash-votes {
+            background: var(--zhihu-blue-bg);
+            color: var(--zhihu-blue);
+            font-weight: 500;
+            padding: 0.15rem 0.65rem;
+            border-radius: 4px;
+            margin-left: auto;
+            font-size: 0.82rem;
+        }
+        .dash-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0 0 1rem 0;
+            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .dash-title a.question-link {
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        .dash-title a.question-link:hover {
+            color: var(--zhihu-blue);
+        }
+        .btn-copy {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+        .btn-copy:hover {
+            color: var(--zhihu-blue);
+            border-color: var(--zhihu-blue);
+        }
+        .answer-content-wrapper {
+            position: relative;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .answer-content-wrapper.collapsed {
+            max-height: 240px;
+        }
+        .answer-content-wrapper.collapsed .fade-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 90px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), var(--card-bg));
+            pointer-events: none;
+        }
+        @media (prefers-color-scheme: dark) {
+            .answer-content-wrapper.collapsed .fade-overlay {
+                background: linear-gradient(to bottom, rgba(30, 30, 30, 0), var(--card-bg));
+            }
+        }
+        .answer-content-wrapper.expanded {
+            max-height: none;
+        }
+        .answer-content-wrapper.expanded .fade-overlay {
+            display: none;
+        }
+        .article-content {
+            font-size: 0.98rem;
+            color: var(--text-primary);
+        }
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin: 1rem 0;
+            display: block;
+        }
+        .article-content p {
+            margin-bottom: 1rem;
+        }
+        .ai-card {
+            margin: 1rem 0;
+            border-radius: 6px;
+            border-left: 3px solid var(--zhihu-blue);
+            background: var(--zhihu-blue-bg);
+            padding: 1rem 1.25rem;
+        }
+        .ai-card-title {
+            font-weight: 600;
+            font-size: 0.92rem;
+            margin-bottom: 0.5rem;
+            color: var(--zhihu-blue);
+        }
+        .ai-card ul, .ai-card ol {
+            margin: 0.35rem 0;
+            padding-left: 1.25rem;
+        }
+        .ai-card li {
+            margin-bottom: 0.25rem;
+            font-size: 0.92rem;
+        }
+        .inline-note-term {
+            position: relative;
+            border-bottom: 1.5px dotted var(--zhihu-blue);
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+        .note-badge {
+            font-size: 0.65rem;
+            padding: 0 0.2rem;
+            color: var(--zhihu-blue);
+            font-weight: 500;
+            vertical-align: super;
+        }
+        .note-tooltip {
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: min(280px, 80vw);
+            white-space: normal;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            background: var(--text-primary);
+            color: var(--card-bg);
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.15s ease;
+        }
+        .inline-note-term:hover .note-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        .ai-background-block {
+            margin: 1rem 0;
+            padding: 0.85rem 1.15rem;
+            border-left: 3px solid var(--zhihu-blue);
+            background: var(--zhihu-blue-bg);
+            border-radius: 0 6px 6px 0;
+        }
+        .ai-block-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.4rem;
+        }
+        .ai-block-tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--zhihu-blue);
+        }
+        .ai-block-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+        .ai-block-body {
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+        .card-footer-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .btn-toggle-expand {
+            background: var(--zhihu-blue-bg);
+            color: var(--zhihu-blue);
+            border: none;
+            padding: 0.4rem 0.85rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .btn-toggle-expand:hover {
+            background: rgba(5, 109, 232, 0.15);
+        }
+        .btn-zhihu {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+        .btn-zhihu:hover {
+            color: var(--zhihu-blue);
+        }
+        .dash-comments-wrapper {
+            margin-top: 1rem;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 0.75rem;
+        }
+        .dash-comments-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+            padding: 0.25rem 0;
+        }
+        .dash-comments-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .btn-toggle-comments {
+            background: transparent;
+            color: var(--zhihu-blue);
+            border: 1px solid var(--border-color);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-toggle-comments:hover {
+            border-color: var(--zhihu-blue);
+            background: var(--zhihu-blue-bg);
+        }
+        .dash-comments-list.collapsed {
+            display: none !important;
+        }
+        .dash-comments-list.expanded {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            margin-top: 0.75rem;
+        }
+        .dash-comment-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.65rem 0.85rem;
+            font-size: 0.85rem;
+        }
+        .dash-comment-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.35rem;
+            font-size: 0.8rem;
+        }
+        .dash-comment-avatar {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--zhihu-blue);
+            color: #ffffff;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+        .dash-comment-author {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .dash-comment-time {
+            color: var(--text-secondary);
+        }
+        .dash-comment-votes {
+            margin-left: auto;
+            color: var(--text-secondary);
+            font-size: 0.78rem;
+            background: var(--card-bg);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+        .dash-comment-body {
+            color: var(--text-primary);
+            line-height: 1.5;
+            word-break: break-word;
+        }
+        .dash-comment-body p {
+            margin: 0;
+        }
+        .dash-child-comments-list {
+            margin-top: 0.6rem;
+            padding-left: 0.85rem;
+            border-left: 2px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .dash-child-comment-item {
+            background: transparent;
+            padding: 0.35rem 0;
+            font-size: 0.83rem;
+        }
+        .author-badge {
+            font-size: 0.68rem;
+            background: var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.05rem 0.35rem;
+            border-radius: 3px;
+            margin-left: 0.15rem;
+            font-weight: 500;
+        }
+        .reply-symbol {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            margin: 0 0.15rem;
+        }
+        .reply-author-name {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dash-header">
+            <h1>知乎 A 股热议全景</h1>
+            <div class="dash-meta">
+                <span>日期：2026年08月23日</span>
+                <span>精选回答：15 篇</span>
+                <span>累计赞同：170 次</span>
+            </div>
+        </div>
+        <div class="dash-grid">
+            
+        <div class="dash-card" id="card-1">
+            <div class="dash-card-header">
+                <span class="dash-author-avatar">B</span>
+                <span class="dash-author">BYA设计集团</span>
+                <span class="dash-time">· 2026-08-23 17:28:06</span>
+                <span class="dash-votes">赞同 106</span>
+            </div>
+            <h2 class="dash-title">
+                <a href="https://www.zhihu.com/question/2074052998762869172" target="_blank" rel="noopener noreferrer" class="question-link">对2026年8月24日A股市场行情，大家有什么看法？</a>
+                <button class="btn-copy" onclick="copyQId('2074052998762869172')">ID: 2074052998762869172</button>
+            </h2>
+            <div class="answer-content-wrapper collapsed" id="content-wrapper-1">
+                <div class="answer-body-content article-content" id="body-1">
+                    <p><img alt="" src="./images/img_1_1.jpg" /><img alt="" src="./images/img_1_2.jpg" /><img alt="" src="./images/img_1_3.jpg" /></p>
+<p>一成粮食没动，明天应该有个修复，修复再走</p>
+<p>走了立新</p>
+<p>哈药周四没控制住异动，周五带动板块下杀，趁机低吸了两个医药</p>
+<p>周五账虎小阳继续回血</p>
+<p>仓位七成都切换到了医药上面，次日前期高标核心受哈药延期影响下杀调整这是周四尾盘就清晰预期到的东西，急杀就是低吸买点。周五知行合一低吸上车后续回拉吃肉，总龙哈药没有一字按死表明抄底资金还是汹涌，也代表后续医药并没有走完。那么前期先调整过的高标核心后面也会先于修复，这就是买入的思路和逻辑</p>
+<p>一个主板核心一个弹性核心保障修复时不落空，明天惯性低开依然是低吸加仓点，冲高t出仓位又可以直接去低吸龙头哈药的水下</p>
+                </div>
+                <div class="fade-overlay"></div>
+            </div>
+            <div class="card-footer-actions">
+                <button class="btn-toggle-expand" onclick="toggleExpand(1)" id="btn-toggle-1">
+                    <span class="btn-text">阅读完整回答与图表解析</span>
+                </button>
+                <a href="https://www.zhihu.com/question/2074052998762869172" target="_blank" rel="noopener noreferrer" class="btn-zhihu">知乎原问题</a>
+            </div>
+            
+            <div class="dash-comments-wrapper">
+                <div class="dash-comments-header" onclick="toggleComments(1)">
+                    <span class="dash-comments-title">热门评论 (10)</span>
+                    <button class="btn-toggle-comments" id="btn-toggle-comments-1" onclick="event.stopPropagation(); toggleComments(1)">展开评论</button>
+                </div>
+                <div class="dash-comments-list collapsed" id="comments-list-1">
+                    
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">B</span>
+                        <span class="dash-comment-author">Backstreetboy</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 19:00 · 上海</span>
+                        <span class="dash-comment-votes">赞同 1</span>
+                    </div>
+                    <div class="dash-comment-body">低吸6个点了[感谢]</div>
+                    
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">知</span>
+                        <span class="dash-comment-author">知乎用户SWorr0</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 17:54 · 广东</span>
+                        <span class="dash-comment-votes">赞同 1</span>
+                    </div>
+                    <div class="dash-comment-body">继续吃药发电可么[暗中学习][暗中学习][暗中学习]</div>
+                    
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">云</span>
+                        <span class="dash-comment-author">云散兮</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 18:23 · 江苏</span>
+                        <span class="dash-comment-votes">赞同 1</span>
+                    </div>
+                    <div class="dash-comment-body">下周也要绯红[感谢][感谢][感谢]</div>
+                    
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">心</span>
+                        <span class="dash-comment-author">心静听炊烟</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 18:25 · 广西</span>
+                        <span class="dash-comment-votes">赞同 1</span>
+                    </div>
+                    <div class="dash-comment-body">周五吸饱了药，周一继续滚动</div>
+                    
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">一</span>
+                        <span class="dash-comment-author">一色</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 18:28 · 江苏</span>
+                        <span class="dash-comment-votes">赞同 1</span>
+                    </div>
+                    <div class="dash-comment-body">鸭哥真的踩准节奏刚刚的</div>
+                    
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">商</span>
+                        <span class="dash-comment-author">商务</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 17:52 · 山西</span>
+                        <span class="dash-comment-votes">赞同 1</span>
+                    </div>
+                    <div class="dash-comment-body">先赞后看</div>
+                    
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">给</span>
+                        <span class="dash-comment-author">给我一支烟</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 17:28 · 山东</span>
+                        <span class="dash-comment-votes">赞同 1</span>
+                    </div>
+                    <div class="dash-comment-body">前排</div>
+                    
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">连</span>
+                        <span class="dash-comment-author">连夜雨</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 18:08 · 广西</span>
+                        <span class="dash-comment-votes">赞同 1</span>
+                    </div>
+                    <div class="dash-comment-body">鸭哥，看到哈药地板挣扎也上了点一鸣，明天该走吗</div>
+                    <div class="dash-child-comments-list">
+                <div class="dash-child-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">连</span>
+                        <span class="dash-comment-author">连夜雨</span>
+                        
+                        <span class="reply-symbol">▸</span> <span class="reply-author-name">BYA设计集团</span>
+                        <span class="dash-comment-time">2026-08-23 18:52 · 广西</span>
+                        <span class="dash-comment-votes">赞同 1</span>
+                    </div>
+                    <div class="dash-comment-body">收到，爱你[感谢]</div>
+                    
+                </div>
+                
+                <div class="dash-child-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">B</span>
+                        <span class="dash-comment-author">BYA设计集团</span>
+                        <span class="author-badge">作者</span>
+                        
+                        <span class="dash-comment-time">2026-08-23 18:20 · 江西</span>
+                        
+                    </div>
+                    <div class="dash-comment-body">说了明天是低吸买点，那你觉得是去是留？</div>
+                    
+                </div>
+                </div>
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">不</span>
+                        <span class="dash-comment-author">不诉离伤</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 18:53 · 安徽</span>
+                        <span class="dash-comment-votes">赞同 1</span>
+                    </div>
+                    <div class="dash-comment-body">来晚了[感谢][感谢][感谢]</div>
+                    
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">一</span>
+                        <span class="dash-comment-author">一直在路上</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 17:29 · 山东</span>
+                        <span class="dash-comment-votes">赞同 1</span>
+                    </div>
+                    <div class="dash-comment-body">来了来了哈哈前十抢到了[感谢][感谢]</div>
+                    <div class="dash-child-comments-list">
+                <div class="dash-child-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">B</span>
+                        <span class="dash-comment-author">BYA设计集团</span>
+                        <span class="author-badge">作者</span>
+                        
+                        <span class="dash-comment-time">2026-08-23 17:32 · 江西</span>
+                        
+                    </div>
+                    <div class="dash-comment-body">有的</div>
+                    
+                </div>
+                </div>
+                </div>
+                
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="dash-card" id="card-2">
+            <div class="dash-card-header">
+                <span class="dash-author-avatar">泰</span>
+                <span class="dash-author">泰格</span>
+                <span class="dash-time">· 2026-08-23 17:27:59</span>
+                <span class="dash-votes">赞同 23</span>
+            </div>
+            <h2 class="dash-title">
+                <a href="https://www.zhihu.com/question/2074052998762869172" target="_blank" rel="noopener noreferrer" class="question-link">对2026年8月24日A股市场行情，大家有什么看法？</a>
+                <button class="btn-copy" onclick="copyQId('2074052998762869172')">ID: 2074052998762869172</button>
+            </h2>
+            <div class="answer-content-wrapper collapsed" id="content-wrapper-2">
+                <div class="answer-body-content article-content" id="body-2">
+                    <p>周五没法，周末复盘完写一写我的想法，有点长了。</p>
+<p>这些都是我的想法，我觉得对于大家做预案事有一些参考的，其实说放交易计划的话，我可以根据盘面判断，但是有很多同志不行所以不放了。</p>
+<p>我们先看盘面，然后再做个简单的计划。</p>
+<p>首先是大盘，指数走势非常的诡异。</p>
+<p>前面一段时间的上涨市场预期是反弹还是反转？很多人是不是等二低点呢，既然是这样，那么前面一段时间的上涨预期就是反弹对吧。周三那根百股跌停的放量大阴线很吓人对吗？那一天大盘没有抵抗下跌，正常来说，看到这根阴线是不是会认为市场反弹结束了要回踩了，但是周四周五完全没有任何恐慌，甚至科技还有一些赚钱效应。仿佛空头一夜之间消失了，这就很诡异了，仿佛量化的筹码在周三砸完就关机了，因为这个市场成交最大的是量化，制造波动的是量化，你散户看到大跌不可能周四不砸吧？</p>
+<p>但是最近科技受制于成交和英伟达财报的不确定性，没有行情也正常，同时也看不到大主力要拉升的意愿。</p>
+<p>综上，大盘半死不活的可能性最高，上涨其次，崩盘最低。</p>
+<p>题材方面</p>
+<p>1，ai硬件。没有成交，外围市场不好，同时美债乱七八糟的事情。科技很难发动整体性的题材。但是大光的业绩其实是超预期的所以周一看大光能否发动。这里科技走的挺恶心的，因为随机性太强。例如周三崩盘的时候功率半导体强，但是周四市场修复的时候最弱，周五反而士兰秒板，什么玩意。所以仍然是个轮动的预期，整体是低吸套利。</p>
+<p>2，大宗，八月以来，化工，煤炭，黄金其实涨幅都挺大的，高油价，美债带来的预期。但是这个题材大概率是趋势，因为受益于期货也受制于期货，既然是趋势，那么只能是这样低吸。贵金属这个短期扰动点是老美是否干预债市，中期我看上涨，因为老美不能快速打赢伊朗太拉胯，废物一个。</p>
+<p>3，短线情绪，这个不做短线的人最好别碰，因为你可能反应不过来，具体票我不提，昨日涨停指数连续三天下跌三连冰，有修复预期，同时没有其他主流题材崛起，市场成交虽然不大但也够了。这里有三个方向，连板，反包，高位抱团，如果想做，一定要找辨识度最高的。</p>
+<p>4，新题材。</p>
+<p>周末有两个消息，一个是英伟达入股电力公司，一个内蒙那个绿色算力，都指向了算力，算电协同。看看周一有没有大单一字定方向。</p>
+<p>综上：</p>
+<p>如果大盘放量上涨，共振新题材优先，ai硬件次之，短线情绪最后。</p>
+<p>如果大盘缩量上涨或者半死不活，共振新题材优先，短线次之，ai硬件最后。</p>
+<p>如果大盘下跌破位，短线情绪优先，新题材次之。但是这个操作难度挺高的，空仓或者如果要上小仓位感受。</p>
+<p>大宗按照趋势看。</p>
+<p>票这个你们自己找吧，我不能放。</p>
+                </div>
+                <div class="fade-overlay"></div>
+            </div>
+            <div class="card-footer-actions">
+                <button class="btn-toggle-expand" onclick="toggleExpand(2)" id="btn-toggle-2">
+                    <span class="btn-text">阅读完整回答与图表解析</span>
+                </button>
+                <a href="https://www.zhihu.com/question/2074052998762869172" target="_blank" rel="noopener noreferrer" class="btn-zhihu">知乎原问题</a>
+            </div>
+            
+            <div class="dash-comments-wrapper">
+                <div class="dash-comments-header" onclick="toggleComments(2)">
+                    <span class="dash-comments-title">热门评论 (7)</span>
+                    <button class="btn-toggle-comments" id="btn-toggle-comments-2" onclick="event.stopPropagation(); toggleComments(2)">展开评论</button>
+                </div>
+                <div class="dash-comments-list collapsed" id="comments-list-2">
+                    
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">多</span>
+                        <span class="dash-comment-author">多久没见你笑了</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 19:43 · 湖北</span>
+                        <span class="dash-comment-votes">赞同 0</span>
+                    </div>
+                    <div class="dash-comment-body">不如看看光吧，通鼎已经二板了，明天上板可以去排或者直接去中军</div>
+                    <div class="dash-child-comments-list">
+                <div class="dash-child-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">泰</span>
+                        <span class="dash-comment-author">泰格</span>
+                        <span class="author-badge">作者</span>
+                        
+                        <span class="dash-comment-time">2026-08-23 19:58 · 上海</span>
+                        
+                    </div>
+                    <div class="dash-comment-body">逛不就是硬件麽，而且明天不放量去不了高位</div>
+                    
+                </div>
+                </div>
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">y</span>
+                        <span class="dash-comment-author">yi11111</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 19:17 · 浙江</span>
+                        <span class="dash-comment-votes">赞同 0</span>
+                    </div>
+                    <div class="dash-comment-body">在黄金里面躲着了[大笑]</div>
+                    
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">头</span>
+                        <span class="dash-comment-author">头顶一个小肉包</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 21:14 · 浙江</span>
+                        <span class="dash-comment-votes">赞同 0</span>
+                    </div>
+                    <div class="dash-comment-body">泰哥，周末消息很多很杂，算电协同被您单独选出来是因为国内和国外题材共振吗？</div>
+                    
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">巨</span>
+                        <span class="dash-comment-author">巨RU控</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 18:31 · 内蒙古</span>
+                        <span class="dash-comment-votes">赞同 0</span>
+                    </div>
+                    <div class="dash-comment-body">说到算电协同，那立新又要起飞了</div>
+                    <div class="dash-child-comments-list">
+                <div class="dash-child-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">泰</span>
+                        <span class="dash-comment-author">泰格</span>
+                        <span class="author-badge">作者</span>
+                        
+                        <span class="dash-comment-time">2026-08-23 18:47 · 上海</span>
+                        
+                    </div>
+                    <div class="dash-comment-body">有可能的</div>
+                    
+                </div>
+                </div>
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">睿</span>
+                        <span class="dash-comment-author">睿智果敢的飞哥</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 20:33 · 浙江</span>
+                        <span class="dash-comment-votes">赞同 0</span>
+                    </div>
+                    <div class="dash-comment-body">缩量空仓，放量进攻[思考]</div>
+                    <div class="dash-child-comments-list">
+                <div class="dash-child-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">泰</span>
+                        <span class="dash-comment-author">泰格</span>
+                        <span class="author-badge">作者</span>
+                        
+                        <span class="dash-comment-time">2026-08-23 20:35 · 上海</span>
+                        
+                    </div>
+                    <div class="dash-comment-body">放量涨才行啊，放量跌那走人了</div>
+                    
+                </div>
+                </div>
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">一</span>
+                        <span class="dash-comment-author">一个老实人</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 20:40 · 江苏</span>
+                        <span class="dash-comment-votes">赞同 0</span>
+                    </div>
+                    <div class="dash-comment-body">[大哭][大哭]</div>
+                    
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">睿</span>
+                        <span class="dash-comment-author">睿智果敢的飞哥</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 20:32 · 浙江</span>
+                        <span class="dash-comment-votes">赞同 0</span>
+                    </div>
+                    <div class="dash-comment-body">送出一个礼物～</div>
+                    <div class="dash-child-comments-list">
+                <div class="dash-child-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">泰</span>
+                        <span class="dash-comment-author">泰格</span>
+                        <span class="author-badge">作者</span>
+                        
+                        <span class="dash-comment-time">2026-08-23 20:34 · 上海</span>
+                        
+                    </div>
+                    <div class="dash-comment-body">[感谢]</div>
+                    
+                </div>
+                </div>
+                </div>
+                
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="dash-card" id="card-3">
+            <div class="dash-card-header">
+                <span class="dash-author-avatar">黑</span>
+                <span class="dash-author">黑化许文彪</span>
+                <span class="dash-time">· 2026-08-23 16:49:12</span>
+                <span class="dash-votes">赞同 13</span>
+            </div>
+            <h2 class="dash-title">
+                <a href="https://www.zhihu.com/question/2074073512084497338" target="_blank" rel="noopener noreferrer" class="question-link">大家对2026年8月24日A股市场行情都怎么看待？</a>
+                <button class="btn-copy" onclick="copyQId('2074073512084497338')">ID: 2074073512084497338</button>
+            </h2>
+            <div class="answer-content-wrapper collapsed" id="content-wrapper-3">
+                <div class="answer-body-content article-content" id="body-3">
+                    <p>技术人应该是99%看衰，因为是技术为代表的各大板块再反弹一下就要开大跌。</p>
+<p>但有色和黄金可能会打破这一切，这一波像12月中旬到1月底，有色+商业航天，上证最强，深指第二，双创最弱（科创第三，创业板第四）</p>
+<p>这一波，有色可以作为中军，再随便来个题材（估计可能是映射大饼这些的大涨之类的题材，但也未必）可以作为量能的扩容，一下子就能把上证指数稳稳的带上去。双创未必，要根据产业，12月中旬双创不也很弱吗？</p>
+<p>双创暂时没有迅速起飞逻辑，但你要说上证指数没有持续上涨的逻辑，那实在太狭隘了。</p>
+                </div>
+                <div class="fade-overlay"></div>
+            </div>
+            <div class="card-footer-actions">
+                <button class="btn-toggle-expand" onclick="toggleExpand(3)" id="btn-toggle-3">
+                    <span class="btn-text">阅读完整回答与图表解析</span>
+                </button>
+                <a href="https://www.zhihu.com/question/2074073512084497338" target="_blank" rel="noopener noreferrer" class="btn-zhihu">知乎原问题</a>
+            </div>
+            
+            <div class="dash-comments-wrapper">
+                <div class="dash-comments-header" onclick="toggleComments(3)">
+                    <span class="dash-comments-title">热门评论 (6)</span>
+                    <button class="btn-toggle-comments" id="btn-toggle-comments-3" onclick="event.stopPropagation(); toggleComments(3)">展开评论</button>
+                </div>
+                <div class="dash-comments-list collapsed" id="comments-list-3">
+                    
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">孙</span>
+                        <span class="dash-comment-author">孙一峰</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 16:55 · 浙江</span>
+                        <span class="dash-comment-votes">赞同 2</span>
+                    </div>
+                    <div class="dash-comment-body"><p>双创大跌，上证靠有色等维持震荡，等双创探底回升，合力上冲，这个剧本我看行</p></div>
+                    
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">饶</span>
+                        <span class="dash-comment-author">饶俊</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 17:22 · 江西</span>
+                        <span class="dash-comment-votes">赞同 0</span>
+                    </div>
+                    <div class="dash-comment-body">那明天科创100看样子找机会就溜了</div>
+                    
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">迷</span>
+                        <span class="dash-comment-author">迷途小书童</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 18:08 · 云南</span>
+                        <span class="dash-comment-votes">赞同 0</span>
+                    </div>
+                    <div class="dash-comment-body">[赞]</div>
+                    
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">打</span>
+                        <span class="dash-comment-author">打上火星</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 18:41 · 广东</span>
+                        <span class="dash-comment-votes">赞同 0</span>
+                    </div>
+                    <div class="dash-comment-body">应该还是光纤芯片半导体，利好周末已经又出来了。其他带不动大盘指数</div>
+                    
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">A</span>
+                        <span class="dash-comment-author">AleatoryK</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 17:06 · 江西</span>
+                        <span class="dash-comment-votes">赞同 0</span>
+                    </div>
+                    <div class="dash-comment-body"><p>护盘主力银行和红利已经冒火星子了，发生重大流动性危机才有可能继续往上，现在肯定不至于</p></div>
+                    
+                </div>
+                
+                <div class="dash-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">H</span>
+                        <span class="dash-comment-author">Haven</span>
+                        
+                        
+                        <span class="dash-comment-time">2026-08-23 17:24 · 广东</span>
+                        <span class="dash-comment-votes">赞同 0</span>
+                    </div>
+                    <div class="dash-comment-body">科创综指还是看支撑位吗</div>
+                    <div class="dash-child-comments-list">
+                <div class="dash-child-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">黑</span>
+                        <span class="dash-comment-author">黑化许文彪</span>
+                        <span class="author-badge">作者</span>
+                        
+                        <span class="dash-comment-time">2026-08-23 17:33 · 上海</span>
+                        
+                    </div>
+                    <div class="dash-comment-body">不做了 你钱无限的吗 做了有色还去做科创？</div>
+                    
+                </div>
+                
+                <div class="dash-child-comment-item">
+                    <div class="dash-comment-header">
+                        <span class="dash-comment-avatar">傲</span>
+                        <span class="dash-comment-author">傲锅肉</span>
+                        
+                        <span class="reply-symbol">▸</span> <span class="reply-author-name">黑化许文彪</span>
+                        <span class="dash-comment-time">2026-08-23 18:40 · 四川</span>
+                        
+                    </div>
+                    <div class="dash-comment-body">请问100是不是短期也不看了</div>
+                    
+                </div>
+                </div>
+                </div>
+                
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="dash-card" id="card-4">
+            <div class="dash-card-header">
+                <span class="dash-author-avatar">渔</span>
+                <span class="dash-author">渔子酱</span>
+                <span class="dash-time">· 2026-08-23 14:57:59</span>
+                <span class="dash-votes">赞同 11</span>
+            </div>
+            <h2 class="dash-title">
+                <a href="https://www.zhihu.com/question/2074125939525564224" target="_blank" rel="noopener noreferrer" class="question-link">如何评价2026年8月24日A股行情？</a>
+                <button class="btn-copy" onclick="copyQId('2074125939525564224')">ID: 2074125939525564224</button>
+            </h2>
+            <div class="answer-content-wrapper collapsed" id="content-wrapper-4">
+                <div class="answer-body-content article-content" id="body-4">
+                    <p>指数结构大的形态是4浪回调中，回调完会开5浪主升。周五的指数结构有点止跌的意思了，但是这里要注意量能情况，是缩量的，周三放量调整，连续2天都是缩量，周五更是不足2w亿了，这种指数进攻还是有些难度。指数下周开始要选择方向了，是大4浪的调整，还是5浪1中的4浪回调，下周一二基本就会有定论。看市场怎么表现吧。</p>
+<p>周五整体来看算是一个弱分的局面，从地板的数量来看，依然保持在13家，不少。连板数量变多，首板数量变少。情绪说分歧主要还是哈药、一鸣、爱丽这些的反馈，并不友好，所以看分歧的概率更大一些。整个市场现在是小票时代，还是多以小票时代的体系应对为主。</p>
+                </div>
+                <div class="fade-overlay"></div>
+            </div>
+            <div class="card-footer-actions">
+                <button class="btn-toggle-expand" onclick="toggleExpand(4)" id="btn-toggle-4">
+                    <span class="btn-text">阅读完整回答与图表解析</span>
+                </button>
+                <a href="https://www.zhihu.com/question/2074125939525564224" target="_blank" rel="noopener noreferrer" class="btn-zhihu">知乎原问题</a>
+            </div>
+            
+        </div>
+        
+        <div class="dash-card" id="card-5">
+            <div class="dash-card-header">
+                <span class="dash-author-avatar">混</span>
+                <span class="dash-author">混合流价值投资</span>
+                <span class="dash-time">· 2026-08-23 17:53:50</span>
+                <span class="dash-votes">赞同 6</span>
+            </div>
+            <h2 class="dash-title">
+                <a href="https://www.zhihu.com/question/2074052998762869172" target="_blank" rel="noopener noreferrer" class="question-link">对2026年8月24日A股市场行情，大家有什么看法？</a>
+                <button class="btn-copy" onclick="copyQId('2074052998762869172')">ID: 2074052998762869172</button>
+            </h2>
+            <div class="answer-content-wrapper collapsed" id="content-wrapper-5">
+                <div class="answer-body-content article-content" id="body-5">
+                    <p>炒股的捷径就是找真正强的实战派大佬学习。</p>
+<p>我说实话，知乎大v我一个都没有纳入，连个十年十倍的都找不出来。</p>
+<p>学习真正大佬的方法，学习他们的观点，也可以关注他们的持仓方向。</p>
+<p>我也给大家分享了很多大佬。</p>
+<p>大家选大佬一定要标准高一点。资金量大，分散吃息股的鹿公可以作为收益的基本要求。（十年二十倍）</p>
+<h2>带来本周最新的大佬持仓总结</h2>
+<p><img alt="" src="./images/img_5_1.jpg" /></p>
+<p>创新药有新大佬加入，不过是短线大佬。</p>
+<p>中概周末出利空，我觉得修复要后移了。</p>
+<p>芯片主要是寒王，但也是短线大佬。</p>
+<p>短线大佬特点就是走势不好就止损了。</p>
+<h2>各版块观点</h2>
+<h2>AI方面</h2>
+<p>结论先行，总结了多个大佬观点</p>
+<p>存储，与光是强周期，短期不见顶，但资本可能先兑现。</p>
+<p>晶圆制造。晶圆制造和存储比较，后者靠涨价获得了十倍以上涨幅，前者因为慢慢涨价所以其产业周期持续性反而更久，股价也不高。硅基时代的硅基制造依然是核心之核心，壁垒之深导致没有新玩家没有竞争。未来数年业绩增长有保证。他不像存储的周期性，也没有光那样的竞争风险技术路线风险。唯一要判断的就是标的的估值。其确定性和成长久期是前两者无法比较的。所以只要估值合理是值得投资的。</p>
+<p>半导体设备。是存储原厂和晶圆制造厂的上游，未来数年订单高增是确定的，唯一要计算的也是估值。国产链更好但是估值也更好，如果估值下来值得投资。</p>
+<blockquote>
+<p>AI长期逻辑没变，为什么现在不是好的买点？</p>
+</blockquote>
+<p>看龙头：</p>
+<p>今年的光模块是增速最快的一年，明年是业绩最好的一年，后年是竞争变激烈，格局变差的一年。短中期向上空间有，看远一点光模块公司想稳在万亿以上市值比较难。</p>
+<p>很多人投资时都会遇到一个矛盾：</p>
+<p>明明知道AI是未来几年的重要产业，相关公司也确实在增长，但自己买进去以后，账户却未必赚钱。</p>
+<p>问题可能不在于AI没有前景，而在于大家经常把三件事混在一起：</p>
+<p>行业有前景，不等于股票现在便宜；公司利润增长，不等于股价还能继续上涨；长期逻辑正确，也不代表任何时间买入都能赚钱。</p>
+<p>我目前仍然看好AI的长期发展，但短期不急。原因很简单，接下来市场需要验证的，已经不是“AI有没有未来”，而是订单、利润和现金流能不能继续超过预期。</p>
+<h3>我为什么开始更多关注有色、创新药</h3>
+<p>我的大佬持仓统计里，铜金有色、CXO与创新药，是目前看好人数和持仓总和相对靠前的几个方向。</p>
+<p>有色（铜金铝）要看的是资源质量、成本优势、供给变化和利润兑现，而不是单纯看某一天商品价格上涨。有色比如铜铝这几年的大涨，是主要来自新能源的功劳。</p>
+<p>而AI的影响也会在未来显现。现在其实用量只有1-2%，而未来电网大更新的时候，机器人开始应用的时候，还有不少新预期。</p>
+<p>黄金也开始修复，我给大家强调了很多回了。</p>
+<p>创新药要看商业化、出海和回款，但是中国的创新药是全球领先的。</p>
+<p>AI制药也是一个重要机会。</p>
+<p>AI制药，真正稀缺的不是调用模型的能力，而是持续生成高质量干湿实验数据的能力。</p>
+<p>大模型本身正在降价，通用模型的使用门槛越来越低，单纯依赖模型能力的公司，护城河可能会快速变薄。反过来，能够自己设计实验、积累样本、形成反馈闭环的企业，数据越多，模型训练和药物筛选效率越高。</p>
+<h2>中概方面</h2>
+<p>阿里这个配售，肯定又影响整个板块，短期投入没利润释放，影响资金做多，影响流动性。</p>
+<p>看板块调整幅度吧，开盘跌幅小的话我考虑出一些，等几天再补回来，现在15%不到的仓位。</p>
+<p>还是没有那么多确定性，腾讯阿里如果成为国内AI赢家，还是可以享受未来的红利，但能不能赢，还是未知数，只是现有估值作为消费股等经济回暖，也不会亏。</p>
+                </div>
+                <div class="fade-overlay"></div>
+            </div>
+            <div class="card-footer-actions">
+                <button class="btn-toggle-expand" onclick="toggleExpand(5)" id="btn-toggle-5">
+                    <span class="btn-text">阅读完整回答与图表解析</span>
+                </button>
+                <a href="https://www.zhihu.com/question/2074052998762869172" target="_blank" rel="noopener noreferrer" class="btn-zhihu">知乎原问题</a>
+            </div>
+            
+        </div>
+        
+        <div class="dash-card" id="card-6">
+            <div class="dash-card-header">
+                <span class="dash-author-avatar">木</span>
+                <span class="dash-author">木已断水</span>
+                <span class="dash-time">· 2026-08-23 11:15:06</span>
+                <span class="dash-votes">赞同 3</span>
+            </div>
+            <h2 class="dash-title">
+                <a href="https://www.zhihu.com/question/2074073512084497338" target="_blank" rel="noopener noreferrer" class="question-link">大家对2026年8月24日A股市场行情都怎么看待？</a>
+                <button class="btn-copy" onclick="copyQId('2074073512084497338')">ID: 2074073512084497338</button>
+            </h2>
+            <div class="answer-content-wrapper collapsed" id="content-wrapper-6">
+                <div class="answer-body-content article-content" id="body-6">
+                    <p>下午要出门，简单写点内容。相信关注我的老粉都清楚我的习惯了，看好逻辑，然后通过ETF参与逻辑，验证成果。我之前就说过AI应用/AI硬件/医药/机器人/带有业绩的AI硬件，会是下半年的主旋律，所以讲讲周末相关的事情。</p>
+<p>AI军火商再次提涨价了。</p>
+<p><img alt="" src="./images/img_6_1.jpg" /></p>
+<p>表面看是服务器涨价，实际上是AI产业链成本压力开始往下游传导。核心原因是存储涨价太猛，HBM、DRAM这些东西现在成了算力服务器里的关键瓶颈。</p>
+<p>这事短期利好存储厂商，比如海力士、美光、三星，也会强化市场对存储周期的预期。</p>
+<p>但对云厂商来说就没那么舒服了。AI服务器本来就贵，动辄几百万美元，再涨15%，资本开支压力会进一步加大。</p>
+<p><strong>后面市场一定会问一句：AI投入这么贵，收入和利润到底能不能跟上？</strong></p>
+<p>所以这不是单纯利好英伟达，而是AI行情进入“验账本”的又一个信号。</p>
+<p>英伟达生态护城河还在，但客户自研芯片动力也会更强。</p>
+<p><img alt="" src="./images/img_6_2.jpg" /></p>
+<p>机器人的发展是个大节奏，未来势必会有各式各样的机器人研发投入，现在部分工厂流水也开始投入机器人了。就是卷卷卷卷卷卷卷卷卷卷卷卷卷卷卷。</p>
+<p>真正重要的不是百米跑多快、跳多高，而是机器人能不能在真实环境里稳定干活。</p>
+<p>赛场看大腿，产业看小脑</p>
+<p><strong>目前国内机器人最值得看的，其实不是炫技，而是“小脑”发展，也就是运动控制、空间感知、手眼协调、任务执行。</strong></p>
+<p>谁能在一个真实房间里，识别桌上的杯子，准确拿起来，平稳端到你面前，不撒、不撞、不抖，谁才是更接近最优机器人的玩家。</p>
+<p>百米破纪录证明硬件和控制很强，但家庭、工厂、物流要的是稳定、便宜、可复制。</p>
+<p>机器人真正上岗，不靠一秒钟的惊艳，靠一万次不出错。</p>
+<p><img alt="" src="./images/img_6_3.jpg" /></p>
+<p>开源模型是AI应用扩散的底座之一。</p>
+<p>之前分析谷歌和AI应用，核心逻辑是：AI不能只停留在大模型发布会和排行榜里，最后一定要进入搜索、广告、YouTube、安卓、医疗、办公、开发者工具这些具体场景。</p>
+<p>Gemma 这种开源模型，作用就在这里。它不一定是最强模型，但它能让大量开发者更低成本地做AI应用。</p>
+<p><strong>闭源大模型负责冲天花板；开源模型负责铺地板。</strong></p>
+<p>如果只有GPT、Gemini这种闭源大模型，AI应用会更集中在大厂手里。</p>
+<p>但有Gemma、Llama、Qwen这类开源模型后，中小团队、垂直行业、端侧设备都能基于它做自己的应用。</p>
+<p>谷歌的算盘也很清楚。它不是只靠Gemma本身收费。</p>
+<p>它真正想要的是：开发者继续留在谷歌生态，模型部署用Google Cloud，端侧应用进入Android</p>
+<p>搜索、广告、Workspace继续被AI强化</p>
+<p><strong>所以Gemma下载量破10亿，本质上说明AI应用生态在扩张。</strong></p>
+<p>这也和之前说的传媒ETF、AI应用逻辑有联系。</p>
+<p>AI应用要爆发，不能只靠最顶级大模型，还需要便宜、可部署、可微调、能嵌入具体业务的模型底座。</p>
+<p><img alt="" src="./images/img_6_4.jpg" /></p>
+<p>不知不觉看着CXO概念步步新高了，第一次提及它时，还是看周线，当时还是1100。未来AI制药会反复提及，周四卖了一笔医药ETF后，周五忙着工作，就没补。好的逻辑要配好的价格</p>
+<p><img alt="" src="./images/img_6_5.jpg" /></p>
+<hr />
+<p>不少关注我的老粉，应该也能明显感觉到，我最近在知乎写得越来越少了。以前会花不少时间写市场、写股票、写复盘，现在更多时间会留给自己的生活和工作。</p>
+<p>这也很正常。</p>
+<p><strong>知乎上大V很多，理财博主也很多，少我一个不少，多我一个也未必改变什么。</strong></p>
+<p>不少粉丝朋友也提醒过我，说我不用太真诚，尤其提到个股和具体操作时，要小心一点。</p>
+<p>这个提醒我理解，也感谢。</p>
+<p>其实我并不介意把自己看好的方向、逻辑和操作思路分享出来。</p>
+<p>比如成长ETF、云铝这些，我愿意写，是因为我自己确实有思考，也确实敢把价格位置摆出来。</p>
+<p>但有时候也会觉得，写作这件事，付出和收获很难完全成正比。</p>
+<p>不是说一定要赚钱，而是时间、精力、情绪消耗，都是真实成本。我也挺佩服那些长期拿着几个股，死磕一个方向，然后每天都能持续输出的博主。</p>
+<p>不管观点对不对，至少这种稳定写作能力和精力，我是佩服的。</p>
+<p>当然，也希望关注我的朋友能慢慢学会区分：</p>
+<p>哪些人是真有逻辑</p>
+<p>哪些人只是情绪喊单</p>
+<p>哪些人是在复盘</p>
+<p>哪些人是在带节奏</p>
+<p>投资这件事，最终还是要回到自己身上。别人可以给你观点，不能替你承担仓位。别人可以分享逻辑，不能替你承受波动。</p>
+<p>后面我会继续写，但可能不会把太多时间都放在这里。生活要过，工作要做，市场也会继续运行。</p>
+<p>资本永不眠，但人总要休息。</p>
+                </div>
+                <div class="fade-overlay"></div>
+            </div>
+            <div class="card-footer-actions">
+                <button class="btn-toggle-expand" onclick="toggleExpand(6)" id="btn-toggle-6">
+                    <span class="btn-text">阅读完整回答与图表解析</span>
+                </button>
+                <a href="https://www.zhihu.com/question/2074073512084497338" target="_blank" rel="noopener noreferrer" class="btn-zhihu">知乎原问题</a>
+            </div>
+            
+        </div>
+        
+        <div class="dash-card" id="card-7">
+            <div class="dash-card-header">
+                <span class="dash-author-avatar">猫</span>
+                <span class="dash-author">猫笔老洋</span>
+                <span class="dash-time">· 2026-08-23 16:11:07</span>
+                <span class="dash-votes">赞同 2</span>
+            </div>
+            <h2 class="dash-title">
+                <a href="https://www.zhihu.com/question/2074125939525564224" target="_blank" rel="noopener noreferrer" class="question-link">如何评价2026年8月24日A股行情？</a>
+                <button class="btn-copy" onclick="copyQId('2074125939525564224')">ID: 2074125939525564224</button>
+            </h2>
+            <div class="answer-content-wrapper collapsed" id="content-wrapper-7">
+                <div class="answer-body-content article-content" id="body-7">
+                    <p>超短线技术指标修复完毕。</p>
+<p>大盘60分钟级别走势，虽说在8月18日，创出新高3994点，实际是一个超短期顶背离，经过周三大幅下挫后，周四周五构筑了一个小平台，基本上修复了超短线技术指标，60分钟KDJ已经低位金叉向上，这都预示着明天的A股，会有一个短线反弹。</p>
+<p>还有一点是，A股在8月14日（上周五）大幅缩量超4000亿，在本周一大盘出现强力拉升，本周五也是缩量超4000亿，明天会不会走出相同走势，大幅拉升，值得大家关注。</p>
+<p>周末外盘走势较好，对A股明天的走势，形成支撑。</p>
+<p>周五晚间美股走势转好，道指涨0.98%，纳指小幅上涨0.45%，这会刺激明天的韩股，也出现上涨，会影响到A股大基金持股为代表的半导体，存储芯片等出现上涨，进而会使得A股大盘出现上涨，为了避免高价科技股孤掌难鸣，主力会让低估值品种出现活跃，形成全线上涨，其乐融融的局面。</p>
+                </div>
+                <div class="fade-overlay"></div>
+            </div>
+            <div class="card-footer-actions">
+                <button class="btn-toggle-expand" onclick="toggleExpand(7)" id="btn-toggle-7">
+                    <span class="btn-text">阅读完整回答与图表解析</span>
+                </button>
+                <a href="https://www.zhihu.com/question/2074125939525564224" target="_blank" rel="noopener noreferrer" class="btn-zhihu">知乎原问题</a>
+            </div>
+            
+        </div>
+        
+        <div class="dash-card" id="card-8">
+            <div class="dash-card-header">
+                <span class="dash-author-avatar">复</span>
+                <span class="dash-author">复利无声</span>
+                <span class="dash-time">· 2026-08-23 17:32:47</span>
+                <span class="dash-votes">赞同 2</span>
+            </div>
+            <h2 class="dash-title">
+                <a href="https://www.zhihu.com/question/2074125939525564224" target="_blank" rel="noopener noreferrer" class="question-link">如何评价2026年8月24日A股行情？</a>
+                <button class="btn-copy" onclick="copyQId('2074125939525564224')">ID: 2074125939525564224</button>
+            </h2>
+            <div class="answer-content-wrapper collapsed" id="content-wrapper-8">
+                <div class="answer-body-content article-content" id="body-8">
+                    <p>这是2026年8月第4周策略报告，也是我们第1191篇周策略报告。</p>
+<h2>一、市场新常态：指数平稳，细分结构化</h2>
+<p>2026年以来，截止到8月21日收盘，上证指数收跌1.60%，创业板指收涨10.69%，科创50收涨23.01%，整体看下来，市场仍是平稳的，甚至是表现不错的。</p>
+<p>但是细分方向的结构化行情，走得确实比较极致；</p>
+<p>截止8月21日收盘，通信设备收涨32.19%，科创半导体材料设备收涨102.50%；</p>
+<p>CS创新药收涨6.14%，医疗器械收跌9.71%，疫苗生物收跌1.29%；</p>
+<p>消费红利收跌19.03%，中证白酒收跌26.36%，恒生消费收跌5.47%；</p>
+<p>有色金属收涨0.13%，细分化工收跌1.89%，新能电池收跌10.54%；</p>
+<p>房地产收跌19.73%，中证银行收跌3.90%，证券公司收跌13.26%；</p>
+<p>中证红利收涨1.37%，红利低波收跌3.39%。（以上Wind，2026.01.01-2026.08.21）</p>
+<p>基本可以看出来，人工智能板块走出了一枝独秀的行情。</p>
+<h2>二、背后的原因：涨多了需要休整</h2>
+<p><strong>回顾2026年以来的行情，不管是相对平稳的上证指数，还是大起大落的创业板指、科创50，以及先后走出“A字型”行情的创新药、人工智能、资源周期等方向，从市场角度来看，一个核心的原因就是2024年“924”行情以来，价值和估值得到了充分的修复，而又阶段性地有所透支；</strong></p>
+<p><strong>说的直白一点，就是：阶段涨多了，需要休整。</strong></p>
+<h2>三、不折腾是因为可以走的更远</h2>
+<p><strong>如果市场进入到整体估值高企，泡沫比较明显，未来比较悲观的境地，那么降低权益配置，增加债券和现金类风险资产的配置，是战略性的选择；</strong></p>
+<p><strong>我们对当下的市场判断是相当乐观的。</strong></p>
+<p>一方面，目前A、H市场跟海外市场并不同步，估值和点位都还没有到一个出现了明显风险的位置，而且横向对比海外主要市场的点位合格和估值，优势比较明显。（Wind，截至2026.08.21）</p>
+<p>另一方面，以新版“国九条”为代表的一系列变革，深刻改变着资本市场的底层逻辑，更好的上市公司，更友好的回报率，更健康公平的市场生态，正在不断的发生和积累中；在这样一个趋势之下，没必要悲观。</p>
+<p>上面这两条就是我经常讲的“中国资产价值重估+上市公司质量提升”双β逻辑。</p>
+<p>第三点，结构化分化比较明显，包括医药、消费、房地产、红利等方向，有些方向处在下降周期的尾部，已经逐步走到了“困境反转”的区间，投资的价值和机会或值得重视和把握。</p>
+<p>第四点，从家庭财富管理，资产配置的角度出发，大类资产里面，权益市场的比重并不算太高，但重要性和必要性在不断的提高；</p>
+<p>越早重视权益市场的配置价值，就越主动。</p>
+<h2>四、对于市场走势和方向的观察思考</h2>
+<p><strong>1、整个市场看，截止到目前市场表现还是可圈可点的，上证指数收跌1.60%，创业板指收涨10.69%，科创50收涨23.01%（Wind，2026.01.01-2026.08.21）；</strong></p>
+<p><strong>考虑“924”行情以来的表现，以及海外市场高位震荡的现状，指数层面大概率会继续保持震荡整理，而结构化行情可能还会持续。</strong></p>
+<p><strong>2、从结构化角度出发，对于2026年剩下的4个多月来看，防御性似乎大于进攻性，红利风格、低位板块、价值风格等方向，也许会继续有不错的表现，包括我们老生常谈的：红利、创新药、新兴消费、资源周期、证券保险等方向。</strong></p>
+<p><strong>需要观察的，传统化学医药、房地产链、传统基础消费等方向，是不是有机会、有明确的信号能够走出来？</strong></p>
+<p><strong>另外，要观察人工智能板块3、4季度的增速情况，这对于定义后面怎么把握和驾驭人工智能板块的行情，还是很重要的。</strong></p>
+<p><strong>3、短期来看，随着30年美债利率高企，中东和东欧持续动荡不安，资源周期和油气等大宗物资似乎是更受市场关注。</strong></p>
+<h2>五、人弃我取，继续定投发车</h2>
+<p>最近2个月，在防守型进攻思路的指导下，成长型、红利型、偏债型、货债型4个方向的基金投顾组合策略表现出来很强的逆周期性。</p>
+<p>我们一直努力追求稳中求进，警惕过热的风险，寻找长期向上的投资机会，力争实现相对于基准的超额+；</p>
+<p>也努力引导大家，利用好闲钱投资的优势，根据自己的风险承受能力，合理的做好家庭财富管理和配置。</p>
+<p>下周三，我们会继续完成每周的定投发车，具体的发车份额建议，周三上午会通过各平台后台发送提醒各位跟投的朋友。</p>
+<p><img alt="" src="./images/img_8_1.jpg" /></p>
+<p>我是无声，每天坚持研究分析基金，</p>
+<p>坚持思考成长、红利、偏债、货债四个方向基金投顾组合策略，</p>
+<p>每个交易日一篇投资复盘文章，</p>
+<p>每个交易日一条《基金大复盘》视频，</p>
+<p>每周日发布周策略报告，</p>
+<p>随时保持高效沟通和交流，一个坚持努力提高研究能力的基金投顾人。</p>
+<p>觉得内容有价值，觉得基金投顾组合值得信赖，觉得顾问交流很重要，就点个赞，留个言，转发一下吧。谢谢。</p>
+<p><strong>文章精选：</strong></p>
+<p><a href="https://xueqiu.com/1448459094/211547194">1、终于可以跟投了</a></p>
+<p><a href="https://xueqiu.com/1448459094/212040396">2、关于银华天玑---悄悄盈的升级说明</a></p>
+<p><a href="https://xueqiu.com/1448459094/212772920">3、关于银华天玑---年年红的升级说明</a></p>
+<p><a href="https://xueqiu.com/1448459094/212987859">4、【重要】组合申购/升级教程</a></p>
+<p>风险提示：本文不构成投资建议，市场有风险，投资需谨慎。</p>
+<p>管理型基金投资顾问服务由银华基金管理股份有限公司提供。定期定额投资是引导投资人进行长期投资、平均投资成本的一种简单易行的投资方式。但是定期定额投资并不能规避基金投资所固有的风险，不能保证投资人获得收益，也不是替代储蓄的等效理财方式。投顾组合建议中可能包含银华基金管理的基金产品及其他基金管理人管理的基金产品。请投资者在使用基金组合服务之前，仔细阅读相关协议、业务规则以及策略说明书，充分了解组合详情及该组合的基金配置情况，确认该组合符合自身的风险承受能力、投资期限和投资目标。投资者投资基金投顾组合策略应遵循“买者自负”原则，在全面了解基金投顾组合策略的风险收益特征、运作特点及适当性匹配意见的基础上，结合自身情况选择合适的基金投顾组合策略，谨慎作出投资决策，独立承担投资风险。银华基金不保证基金投资组合策略一定盈利及最低收益，也不做保本承诺。基金投资组合策略的风险特征与单只基金产品的风险特征存在差异。<strong>投顾服务的过往业绩并不预示其未来业绩表现，为其他投资人创造的收益并不构成业绩表现的保证。</strong>基金投资顾问业务尚处于试点阶段，基金投资顾问机构存在因试点资格被取消不能继续提供服务的风险。基金有风险，投资需谨慎。</p>
+                </div>
+                <div class="fade-overlay"></div>
+            </div>
+            <div class="card-footer-actions">
+                <button class="btn-toggle-expand" onclick="toggleExpand(8)" id="btn-toggle-8">
+                    <span class="btn-text">阅读完整回答与图表解析</span>
+                </button>
+                <a href="https://www.zhihu.com/question/2074125939525564224" target="_blank" rel="noopener noreferrer" class="btn-zhihu">知乎原问题</a>
+            </div>
+            
+        </div>
+        
+        <div class="dash-card" id="card-9">
+            <div class="dash-card-header">
+                <span class="dash-author-avatar">走</span>
+                <span class="dash-author">走在桥水的猫</span>
+                <span class="dash-time">· 2026-08-23 20:53:29</span>
+                <span class="dash-votes">赞同 1</span>
+            </div>
+            <h2 class="dash-title">
+                <a href="https://www.zhihu.com/question/2074125939525564224" target="_blank" rel="noopener noreferrer" class="question-link">如何评价2026年8月24日A股行情？</a>
+                <button class="btn-copy" onclick="copyQId('2074125939525564224')">ID: 2074125939525564224</button>
+            </h2>
+            <div class="answer-content-wrapper collapsed" id="content-wrapper-9">
+                <div class="answer-body-content article-content" id="body-9">
+                    <p>这个周末，光一哥旭创的中报业绩，各处的讨论非常热闹...单Q2，收入222.81亿，环比+14.3%；归母净利润79.17亿，环比+38%；扣非净利润73.74亿，环比+29%。</p>
+<p>有些卖方喊着超预期，也有说符合预期的，主要是口径不同，诸如最低的都跑去和72-73亿的市场预期做对比。但据我说知，之前主流小作文给的75亿，后续官方做过几次交流，给的30%左右增速指引。</p>
+<p>所以单就字面数据来讲，<strong>首先肯定是没有雷的，但是否超预期就仁者见仁智者见智了</strong>，我的看法是顶多在符合预期的前提下，稍稍往上一丢丢。其次，业内人都知道重点不在Q2，而在Q3。</p>
+<p>今年要花钱的地方很多，供应链上游锁货和囤货、设备、扩产都需要钱，很多信息也和北美那边圆的上，只是大家都没想到，Q1其他家或多或少都有点物料问题，没问题的一哥却在Q2出了点问题。</p>
+<p>而且从传小作文开始，到官方出来做澄清和交流，某核心供应商临时跳票，影响了一哥出货进度的事儿，就在业内都传开了，据说当时NV还帮忙出面找博通做了协调。</p>
+<p>现在市场对一哥Q3的预期很高，理由有两点：1）<strong>Q3物料受到临时跳票的影响会大幅收窄</strong>；2）<strong>1.6T有望放量</strong>。目前主流预期全年净利润可能在330-350亿左右，甚至还有看到370亿的。</p>
+<p>这里头还有两个瓜，一个是章建平新进了十大股东，不过和外面讨论不同的是，我觉得股价涨跌并不会和谁买了有多大联系...不然葛卫东也不会在罩衣那儿坐了过山车。</p>
+<p>另个瓜就有点冷门了，一哥打造了某个历史记录，即<strong>连续13个季度，单季度归母净利润同比+50%</strong>...还不算完，如果按照明年1000亿的大饼算，这有可能是人类历史上第一家连续18个季度同比+50%的公司。</p>
+<p><img alt="" src="./images/img_9_1.jpg" /></p>
+<p>不仅是一哥，二哥的股权激励计划也有很大的反响。</p>
+<p><img alt="" src="./images/img_9_2.jpg" /></p>
+<p>背后激励说明两件事，一是今年收入的下限是500亿，如果按照40%净利率算，全年200亿利润（上半年也就75亿，下半年要提速）；二是官方自己认为行业的景气度，起码能到28-29年。</p>
+<p>......</p>
+<p>另外长端美债利率上行，对科技板块难免是一个天然的压制因素，上周贝森特宣布扩大了美债回购规模，但也就是解解燃眉之急，美债没两天就回到了干预前的位置附近。</p>
+<p>比预期中快了一点，但也能想象的到...当时夜报里就提了嘴，<strong>核心变量是在沃什那儿</strong>，回购并不能起到决定性的作用。所以月底的杰克逊霍尔全球央行年会，沃什会放出什么信号就非常重要了。</p>
+<p>但是相比较科技这种利率敏感体质，美债叙事的危机反而让大饼突破了7.9万美元，加密货币最近的行情可以用狂欢来形容，这里头也有监管框架出现历史性突破的因素。</p>
+<p>除了大饼外，黄金走的也不差，周末我看到一种说法是，虽然美债利率高了后，黄金会承压，但这是在本金不会出问题的情况下。换句话说，这次美债危机导致的利率上行，反而对黄金是个利好。</p>
+<p>这句话我还反复琢磨下了，再看资产反应，突然觉得有那么点道理。用人话讲...大概意思就是指，讨论利率本身可能并没有价值量，甚至是利率上行或者下行，都可以变成利好。</p>
+<p>还有一种说法是，黄金是一个价格可以实现自我驱动的商品，并不需要了解价格驱动的背后，只要价格上涨，背后的逻辑就能实现自我驱动。总之黄金如果短期出现回调，也可以考虑看看这个方向。</p>
+<p>......</p>
+<p>最后，如果不算31号，下周相当于就是月底的最后一周，一方面是所有的中报会在剩余的几天内披露完，另一方面就是上头说的杰克逊霍尔全球央行年会，缩量偏谨慎的氛围可能还会持续。</p>
+<p>过去诸如此类的阶段咱们经历过很多次，也没剩几天...真不碍事，多点耐心，等事件全部落地之后，市场就会好起来了，就酱。</p>
+                </div>
+                <div class="fade-overlay"></div>
+            </div>
+            <div class="card-footer-actions">
+                <button class="btn-toggle-expand" onclick="toggleExpand(9)" id="btn-toggle-9">
+                    <span class="btn-text">阅读完整回答与图表解析</span>
+                </button>
+                <a href="https://www.zhihu.com/question/2074125939525564224" target="_blank" rel="noopener noreferrer" class="btn-zhihu">知乎原问题</a>
+            </div>
+            
+        </div>
+        
+        <div class="dash-card" id="card-10">
+            <div class="dash-card-header">
+                <span class="dash-author-avatar">股</span>
+                <span class="dash-author">股乐悠</span>
+                <span class="dash-time">· 2026-08-23 09:07:40</span>
+                <span class="dash-votes">赞同 1</span>
+            </div>
+            <h2 class="dash-title">
+                <a href="https://www.zhihu.com/question/2074125939525564224" target="_blank" rel="noopener noreferrer" class="question-link">如何评价2026年8月24日A股行情？</a>
+                <button class="btn-copy" onclick="copyQId('2074125939525564224')">ID: 2074125939525564224</button>
+            </h2>
+            <div class="answer-content-wrapper collapsed" id="content-wrapper-10">
+                <div class="answer-body-content article-content" id="body-10">
+                    <p>今天是2026年8月23日，星期日，做个简单的复盘。</p>
+<p>成交量连续两日的缩量，再次跌漏2万亿元，周五市场弱反弹。创业板中阳领涨，上证和科创50微涨收平。截至收盘，各主要指数表现如下：</p>
+<ul>
+<li>上证指数收盘3905.20点，收涨0.04%，最高点3912.13点，最低点3883.79点，缩量收阳，成交额8834.24亿元；</li>
+<li>创业板指收盘3545.58点，收涨1.43%，最高点3563.06点，最低点3478.52点，缩量中阳，成交额4944.85亿元；</li>
+<li>科创50收盘1653.56点，收涨0.04%，最高点1675.82点，最低点1640.62点，缩量收阳，成交额775.73亿元。</li>
+</ul>
+<p><strong>成交额</strong>：沪深两市合计成交约18923亿元，较上一交易日20939亿缩量约2017亿，缩幅约9.63%。两市成交已连续两天萎缩（周二25300亿→周三20939亿→周五18923亿），量能持续萎缩，资金观望情绪浓厚。三指数全部连续缩量，上证缩至8834亿创近期新低，远低于12000亿标准；创业板缩至4945亿远低于6300亿标准；科创50缩至776亿创近期新低，远低于1400亿底线。</p>
+<p><strong>个股表现</strong>：全市场涨停57家，跌停14家。涨停数量较昨日83家明显下降，跌停家数与昨日13家基本持平。中位数-0.11%，全市场2505家股票上涨、2862家下跌、182家平盘，赚钱效应44.7%，较昨日73.8%大幅回落。指数虽然收红，但个股跌多涨少，赚钱效应不佳，说明反弹主要集中在大盘股，中小盘股仍承压。</p>
+<p><strong>涨停分析</strong>：周五57股涨停。</p>
+<p>汉森制药3连板为市场最高连板。昨天4连板的金健米业今日断板，市场最高标从4板降至3板，市场情绪有所退潮。2连板方向：深中华A、双鹭药业、键凯科技、中关村、贝瑞基因、哈森股份、科森科技、近岸蛋白、宇环数控、通鼎互联。</p>
+<p>涨停行业分布：</p>
+<p>通信设备6家、化学制药4家、化学制品4家、消费电子4家、专用设备4家、通用设备3家、塑料3家、贵金属2家、电网设备2家、汽车零部2家、工业金属2家、中药1家、医疗服务1家、生物制品1家、半导体1家、其他电子1家、燃气1家、金属新材1家、一般零售1家、服装家纺1家、饰品1家、包装印刷1家、光学光电1家、照明设备1家、房屋建设1家、家居用品1家、炼化及贸1家、能源金属1家、电池1家。</p>
+<p>通信设备方向6家涨停为今日最强主线，通鼎互联72.6亿成交额为涨停池第一大成交额，星网锐捷24.1亿、中瓷电子22.0亿，资金进场坚决。</p>
+<p>医药生物方向从昨日37家骤降至7家，退潮明显。</p>
+<p>成交额TOP10涨停股：通鼎互联72.6亿、湖南白银43.1亿、旭光电子37.8亿、盛达资源33.5亿、士兰微27.0亿、星网锐捷24.1亿、诺德股份22.9亿、白银有色20.2亿、融捷股份19.7亿、飞龙股份16.5亿。</p>
+<p><strong>开盘八法</strong></p>
+<p><img alt="" src="./images/img_10_1.jpg" /></p>
+<p>周五上证开盘是反覆高盘，收小红，符合开盘预期，内困三日翻红；</p>
+<p>创业板指开盘瞬间低盘，收中红，符合开盘预期，内困三日翻红；</p>
+<p>科创50指数开盘是震荡低盘，收小红，符合开盘预期。</p>
+<p>指数虽然是收涨的，但是成交量极速缩量，这是瑕疵。</p>
+<p>周五是股指期货交割日，指数运行平稳，符合预期。</p>
+<p><img alt="" src="./images/img_10_2.jpg" /></p>
+<p><strong>回顾昨日的复盘：</strong><a href="https://zhuanlan.zhihu.com/p/2073924196732818501">多头孕育线，第一个止跌讯号</a></p>
+<p><img alt="" src="./images/img_10_3.jpg" /></p>
+<p>上证周五的K线组合是内困三日翻红，第二个止跌讯号，但是量能不够。</p>
+<p><img alt="" src="./images/img_10_4.jpg" /></p>
+<p>周五最低点为3883.79点，刚好到3884点支撑位。</p>
+<p><img alt="" src="./images/img_10_5.jpg" /></p>
+<p>创业板指周五继续向上关窗动作，K线组合是内困三日翻红，第二个止跌买讯。</p>
+<p><img alt="" src="./images/img_10_6.jpg" /></p>
+<p>创业板指数周四的KD张口过大，有技术收敛的需求，周五上涨符合预期。</p>
+<p><img alt="" src="./images/img_10_7.jpg" /></p>
+<p>科创50指数周五最低点1640.62点，再次测试了1634-1650点支撑区。</p>
+<p><strong>回顾一下上周的周复盘</strong>：<a href="https://zhuanlan.zhihu.com/p/2072477794681018289">量能不济，震荡时间会拉长</a></p>
+<p><img alt="" src="./images/img_10_8.jpg" /></p>
+<p>上周上涨站上3911.67点，所以本周冲到3994点，被10周线压制，上证本周继续是酝酿上升三法。</p>
+<p><img alt="" src="./images/img_10_9.jpg" /></p>
+<p>创业板本周越过了3740点，可惜没有站稳3720点，再次被压回。</p>
+<p><img alt="" src="./images/img_10_10.jpg" /></p>
+<p>创业板本周40周线是强支撑，量能不足，指数被拉回。</p>
+<p><img alt="" src="./images/img_10_11.jpg" /></p>
+<p>科创50指数本周继续围绕1700-1721点震荡，1634-1650点继续是强支撑。量能不足，只能短多对待。</p>
+<p><strong>热点板块深度解析</strong></p>
+<p>周五盘面的核心特征是"缩量弱反弹，通信设备接棒医药成为最强方向"。</p>
+<p><strong>通信设备方向6家涨停，今日最强主线</strong></p>
+<p>通信设备方向今日6家涨停：通鼎互联、星网锐捷、东信和平、瑞斯康达、中瓷电子、楚天龙。通鼎互联72.6亿为涨停池第一大成交额，连续2连板。星网锐捷24.1亿、中瓷电子22.0亿，大成交额个股密集，资金进场坚决。通信设备方向周五是资金合力最明确的方向，可能与5G/算力基础设施预期有关。但以首板为主，持续性仍需观察下周一验证。</p>
+<p><strong>医药生物方向退潮，从37家降至7家</strong></p>
+<p>医药生物方向今日仅7家涨停（化学制药4家、中药1家、医疗服务1家、生物制品1家），较昨日37家大幅萎缩。汉森制药3连板为医药方向最高连板，也是全市场最高标。键凯科技2连板20cm涨停。但整体来看，医药板块从昨日绝对王者退潮明显，资金开始向通信设备方向切换。医药板块中长线主线观点不变，但短期需要消化获利盘，等待回调后的低吸机会。</p>
+<p><strong>贵金属/有色方向4家涨停</strong></p>
+<p>湖南白银43.1亿、盛达资源33.5亿、白银有色20.2亿、豪美新材4家涨停。贵金属方向大涨可能与黄金价格创新高有关。大成交额个股密集，但持续性待观察，与外围大宗商品走势联动。</p>
+<p><strong>消费电子方向4家涨停</strong></p>
+<p>科森科技2连板、可川科技、共达电声、国光电器4家涨停。消费电子方向持续有异动，可能与苹果新机周期相关。</p>
+<p><strong>金健米业4连板断板，市场高度回落</strong></p>
+<p>昨天4连板的金健米业今日断板，未出现在涨停池中。市场最高标从4板降至汉森制药3板，连板高度回落，说明市场情绪虽有企稳但尚未完全修复。</p>
+<p><strong>指数复盘</strong></p>
+<p>与昨天的缩量企稳不同，周五市场继续缩量弱反弹。创业板中阳领涨是亮点，但上证和科创50几乎平盘报收。两市成交连续三天萎缩至1.89万亿，资金观望情绪浓厚。</p>
+<p>延续7月23日复盘的宏观框架：7月踩熊左脚已兑现，8月底黄金坑技术熊右脚要落地。8/19黑天鹅加速了下杀，但不改变宏观框架，反而可能加速右脚落地。</p>
+<p><strong>上证</strong></p>
+<p>1、日线图</p>
+<p><img alt="" src="./images/img_10_12.jpg" /></p>
+<p>上证指数的K线组合内困三日翻红，第二个止跌讯号，周四是多头孕育线。短期的疑虑是如果短期3天线内不能收回周三阴线的中点，需要谨防下降三法。</p>
+<p>短期最大的问题是量能不足，目前均量线是死叉状态，死叉非盘即跌。</p>
+<p>下周量能需要放量到11000亿以上，才可以有上攻的条件，否则需要多小心。</p>
+<p>支撑继续看3878-3884点。</p>
+<p><img alt="" src="./images/img_10_13.jpg" /></p>
+<p>日线macd运行14个交易日了，越过了12个交易日，多头周期还没有走完，但是需要量能跟上，否则也需要多警惕。</p>
+<p><img alt="" src="./images/img_10_14.jpg" /></p>
+<p>观点不变，目前KD张口19，死叉后第3、6、9天3的倍数找买点。周五是死叉后第2天，还不是买点时间窗口。如果明天继续震荡，第3天（下周一）是第一个买点观察窗口。</p>
+<p><img alt="" src="./images/img_10_15.jpg" /></p>
+<p>上证指数5、10、60和120天线继续是压力，30天线是牵制，20天线是支撑，年线是向上的牵引力。</p>
+<p>下周5天线上本周继续是压力，后半周有机会反转向上为支撑；</p>
+<p>10天线下周继续是压力。</p>
+<p>20天线是下周继续是支撑或者是向上的牵引力。</p>
+<p>30天线下周上半周继续是牵制，下周后半周有机会反转向上为支撑。</p>
+<p>60天线和120天线继续压力。年线是向上的牵引力。</p>
+<p>短期至少放量收复3927.85点，才能看高一线。</p>
+<p>波段观点不变：4043-4066点怎么跌下去后面就会怎么拉回来。短期在3900点附近反复震荡积蓄力量。</p>
+<p>2、周线图</p>
+<p><img alt="" src="./images/img_10_16.jpg" /></p>
+<p>上证本周5周线是支撑，10周线是压力，本周最高点3994.18点，接近40周线，40周线是压力。</p>
+<p>下周5周线继续是支撑，10、20、30和40周线继续是压力。</p>
+<p>K线组合还是在酝酿上升三法，量能不足，只会拉长震荡时间。</p>
+<p>从周线看指数至少还需要震荡1周，下下周40周线会反转向上为支撑，但是20和30周线继续是压力，所以指数的上涨目标位也只能看4043-4066点。</p>
+<p><strong>创业板指</strong></p>
+<ol>
+<li>日线图</li>
+</ol>
+<p><img alt="" src="./images/img_10_17.jpg" /></p>
+<p>创业板周五的K线组合是内困三日翻红，第二个止跌买讯，周五收盘在周三的阴线一半以上，化解了下降三法疑虑，下周重点看能不能有效关窗（3622.5-3662.45点），如果有效关窗可以继续高看一线，如果上半周不能有效关窗需要多警惕，因为右脚还没有确立。<br />
+短期支撑继续3465点。<br />
+创业板的均量线也是死叉状态，下周必须补量且持续有量，量能需要放量6400亿以上。<br />
+创业板指数目前5、10、30和60天线是压力，20天线是支撑，120天是向上的牵引力。<br />
+下周5天线下周一和下周二继续是压力，从周三开始会反转向上为支撑。<br />
+10天线下周会走平，不具备支撑和压力作用。<br />
+20天线下周一会短暂反转向下为牵制，一直基本都是牵制。<br />
+30天下周一至周四都是牵制，下周五会反转向上为支撑。<br />
+60天线继续是压力，120天线继续是向上的牵引力。</p>
+<ol>
+<li>周线图</li>
+</ol>
+<p><img alt="" src="./images/img_10_18.jpg" /></p>
+<p>创业板指周线图的K线组合是阴线吞噬线，下周必须放量上涨，否则指数会再次去测试3374点符合。</p>
+<p><img alt="" src="./images/img_10_19.jpg" /></p>
+<p>周线从从指标看，macd空头周线还没结束，还需要继续运行大约6周，所以指数会继续震荡。</p>
+<p>周KD金叉在即，cci指数上穿-100，所以指数不需要多悲观，关键看量能，但是需要唯量是问。</p>
+<p><strong>科创50指数</strong></p>
+<ol>
+<li>日线图</li>
+</ol>
+<p><img alt="" src="./images/img_10_20.jpg" /></p>
+<p>科创50指数上周四下落跳双阴性重要的卖讯，周五是颈内线，第3个卖讯。<br />
+短期1634-1650点是支撑、年线是支撑。<br />
+但是短期观点不变：1700-1721点是空头的大本营，怎么涨上去就会怎么跌回来。1634-1650点多头大本营，怎么跌漏就会怎么涨回来。<br />
+周五最低1640.62再次深入大本营内测试，收盘1653.56回到大本营上方。连续两天在大本营内测试支撑，低点从昨天1638.29抬高至周五1640.62，支撑力有所显现。<br />
+目前科创50指数只要半年线和年线是支撑，其他均线都是压力。周五收盘在半年线1647上方，支撑暂时有效。<br />
+科创50周五缩量至776亿，创近期新低，远低于1400亿底线。均量线死叉非盘即跌，如果继续缩量，科创50指数会继续寻底。<br />
+短期继续关注上周三的下跳缺口能不能有效关窗。<br />
+下周5天线的上半周继续是压力，后半周有机会反转向上为支撑。<br />
+10天线继续是压力。<br />
+20天下周一至周三都是压力，周四有机会反转向上为支撑。<br />
+30和60天线下桌继续是压力。</p>
+<ol>
+<li>周线图</li>
+</ol>
+<p><img alt="" src="./images/img_10_21.jpg" /></p>
+<p>科创50指数周线跌漏上上周的阳线一半，弱势的表现，但是只要有量，还有机会上升三法。</p>
+<p>5、10周线都是压力，20周线是向上的牵引力，30周线是支撑。</p>
+<p>下周5、10周线继续是压力，20周线继续是向上的牵引力。20周线以下机会大于风险。目前20线在1713点。</p>
+<p><strong>操作策略和关键观察点</strong></p>
+<p>成交量监控：周五两市成交约1.89万亿，较昨日2.09万亿继续缩量2017亿，量能持续萎缩是最大隐忧。下周一量能变化是核心观察点：如果放量收阳，企稳确认；如果继续缩量，震荡时间进一步拉长。</p>
+<p>KD买点窗口：上证KD死叉后第2天，下周一（8/24）是第3天，第一个买点观察窗口。如果下周一缩量企稳或放量收阳，可能是买点确认。</p>
+<p>创业板关窗：8/19下跳窗口周五第2天未关，最高3563距窗口下沿3605还有42点。下周一第3天是关键时间窗口。5个交易日内有效关窗可解除疑虑。</p>
+<p>通信设备方向：今日6家涨停为最强主线，通鼎互联72.6亿2连板领涨。关注下周一持续性，是否有3连板个股出现。</p>
+<p>医药生物退潮：从37家降至7家，短期获利盘兑现。但中长线主线观点不变，等待回调后的低吸机会。</p>
+<p>金健米业断板：4连板断板，市场高度回落至3板。市场情绪虽有企稳但尚未完全修复。</p>
+<p>板块配置建议：</p>
+<p>通信设备方向：今日最强6家涨停，通鼎互联72.6亿2连板领涨。但以首板为主，下周一持续性是关键观察点。</p>
+<p>医药生物方向：短期退潮但不改中长线主线判断。等待回调后低位补涨标的的低吸机会。</p>
+<p>贵金属/有色方向：4家涨停，受益于黄金创新高。但持续性待观察，与外围大宗商品走势联动。</p>
+<p>消费电子方向：4家涨停持续异动，关注苹果新机周期催化。</p>
+<p><strong>风险提示：</strong></p>
+<p>外部不确定性：美债收益率维持高位，外围环境仍不稳定。持续关注美债收益率变化和下周一美股走势。</p>
+<p>今天就复盘到这里。更好的技术交流和互动请到：我的圈子、我的互动群。</p>
+<p>一切都没有变，变的是自己的心态。按照自己的"规划行情，把握行情、跟随行情、应变行情"，做好资金策略，控制好合理仓位，调整好自己的心态，自己节奏不能乱，冷静交易。要顺势而为，不能刻舟求剑。稳住，咱们能赢！！道阻且长，行则将至；行而不辍，未来可期。</p>
+<p>以上个人观点仅供参考，不构成投资建议。</p>
+                </div>
+                <div class="fade-overlay"></div>
+            </div>
+            <div class="card-footer-actions">
+                <button class="btn-toggle-expand" onclick="toggleExpand(10)" id="btn-toggle-10">
+                    <span class="btn-text">阅读完整回答与图表解析</span>
+                </button>
+                <a href="https://www.zhihu.com/question/2074125939525564224" target="_blank" rel="noopener noreferrer" class="btn-zhihu">知乎原问题</a>
+            </div>
+            
+        </div>
+        
+        <div class="dash-card" id="card-11">
+            <div class="dash-card-header">
+                <span class="dash-author-avatar">走</span>
+                <span class="dash-author">走在桥水的猫</span>
+                <span class="dash-time">· 2026-08-23 20:53:10</span>
+                <span class="dash-votes">赞同 1</span>
+            </div>
+            <h2 class="dash-title">
+                <a href="https://www.zhihu.com/question/2074052998762869172" target="_blank" rel="noopener noreferrer" class="question-link">对2026年8月24日A股市场行情，大家有什么看法？</a>
+                <button class="btn-copy" onclick="copyQId('2074052998762869172')">ID: 2074052998762869172</button>
+            </h2>
+            <div class="answer-content-wrapper collapsed" id="content-wrapper-11">
+                <div class="answer-body-content article-content" id="body-11">
+                    <p>这个周末，光一哥旭创的中报业绩，各处的讨论非常热闹...单Q2，收入222.81亿，环比+14.3%；归母净利润79.17亿，环比+38%；扣非净利润73.74亿，环比+29%。</p>
+<p>有些卖方喊着超预期，也有说符合预期的，主要是口径不同，诸如最低的都跑去和72-73亿的市场预期做对比。但据我说知，之前主流小作文给的75亿，后续官方做过几次交流，给的30%左右增速指引。</p>
+<p>所以单就字面数据来讲，<strong>首先肯定是没有雷的，但是否超预期就仁者见仁智者见智了</strong>，我的看法是顶多在符合预期的前提下，稍稍往上一丢丢。其次，业内人都知道重点不在Q2，而在Q3。</p>
+<p>今年要花钱的地方很多，供应链上游锁货和囤货、设备、扩产都需要钱，很多信息也和北美那边圆的上，只是大家都没想到，Q1其他家或多或少都有点物料问题，没问题的一哥却在Q2出了点问题。</p>
+<p>而且从传小作文开始，到官方出来做澄清和交流，某核心供应商临时跳票，影响了一哥出货进度的事儿，就在业内都传开了，据说当时NV还帮忙出面找博通做了协调。</p>
+<p>现在市场对一哥Q3的预期很高，理由有两点：1）<strong>Q3物料受到临时跳票的影响会大幅收窄</strong>；2）<strong>1.6T有望放量</strong>。目前主流预期全年净利润可能在330-350亿左右，甚至还有看到370亿的。</p>
+<p>这里头还有两个瓜，一个是章建平新进了十大股东，不过和外面讨论不同的是，我觉得股价涨跌并不会和谁买了有多大联系...不然葛卫东也不会在罩衣那儿坐了过山车。</p>
+<p>另个瓜就有点冷门了，一哥打造了某个历史记录，即<strong>连续13个季度，单季度归母净利润同比+50%</strong>...还不算完，如果按照明年1000亿的大饼算，这有可能是人类历史上第一家连续18个季度同比+50%的公司。</p>
+<p><img alt="" src="./images/img_11_1.jpg" /></p>
+<p>不仅是一哥，二哥的股权激励计划也有很大的反响。</p>
+<p><img alt="" src="./images/img_11_2.jpg" /></p>
+<p>背后激励说明两件事，一是今年收入的下限是500亿，如果按照40%净利率算，全年200亿利润（上半年也就75亿，下半年要提速）；二是官方自己认为行业的景气度，起码能到28-29年。</p>
+<p>......</p>
+<p>另外长端美债利率上行，对科技板块难免是一个天然的压制因素，上周贝森特宣布扩大了美债回购规模，但也就是解解燃眉之急，美债没两天就回到了干预前的位置附近。</p>
+<p>比预期中快了一点，但也能想象的到...当时夜报里就提了嘴，<strong>核心变量是在沃什那儿</strong>，回购并不能起到决定性的作用。所以月底的杰克逊霍尔全球央行年会，沃什会放出什么信号就非常重要了。</p>
+<p>但是相比较科技这种利率敏感体质，美债叙事的危机反而让大饼突破了7.9万美元，加密货币最近的行情可以用狂欢来形容，这里头也有监管框架出现历史性突破的因素。</p>
+<p>除了大饼外，黄金走的也不差，周末我看到一种说法是，虽然美债利率高了后，黄金会承压，但这是在本金不会出问题的情况下。换句话说，这次美债危机导致的利率上行，反而对黄金是个利好。</p>
+<p>这句话我还反复琢磨下了，再看资产反应，突然觉得有那么点道理。用人话讲...大概意思就是指，讨论利率本身可能并没有价值量，甚至是利率上行或者下行，都可以变成利好。</p>
+<p>还有一种说法是，黄金是一个价格可以实现自我驱动的商品，并不需要了解价格驱动的背后，只要价格上涨，背后的逻辑就能实现自我驱动。总之黄金如果短期出现回调，也可以考虑看看这个方向。</p>
+<p>......</p>
+<p>最后，如果不算31号，下周相当于就是月底的最后一周，一方面是所有的中报会在剩余的几天内披露完，另一方面就是上头说的杰克逊霍尔全球央行年会，缩量偏谨慎的氛围可能还会持续。</p>
+<p>过去诸如此类的阶段咱们经历过很多次，也没剩几天...真不碍事，多点耐心，等事件全部落地之后，市场就会好起来了，就酱。</p>
+                </div>
+                <div class="fade-overlay"></div>
+            </div>
+            <div class="card-footer-actions">
+                <button class="btn-toggle-expand" onclick="toggleExpand(11)" id="btn-toggle-11">
+                    <span class="btn-text">阅读完整回答与图表解析</span>
+                </button>
+                <a href="https://www.zhihu.com/question/2074052998762869172" target="_blank" rel="noopener noreferrer" class="btn-zhihu">知乎原问题</a>
+            </div>
+            
+        </div>
+        
+        <div class="dash-card" id="card-12">
+            <div class="dash-card-header">
+                <span class="dash-author-avatar">叙</span>
+                <span class="dash-author">叙市</span>
+                <span class="dash-time">· 2026-08-23 11:51:21</span>
+                <span class="dash-votes">赞同 1</span>
+            </div>
+            <h2 class="dash-title">
+                <a href="https://www.zhihu.com/question/2074073512084497338" target="_blank" rel="noopener noreferrer" class="question-link">大家对2026年8月24日A股市场行情都怎么看待？</a>
+                <button class="btn-copy" onclick="copyQId('2074073512084497338')">ID: 2074073512084497338</button>
+            </h2>
+            <div class="answer-content-wrapper collapsed" id="content-wrapper-12">
+                <div class="answer-body-content article-content" id="body-12">
+                    <p>过去这周，在众多轮动题材里，艺术成分最高的，当属靠摩根大通（小摩）“粮食危机”研报突然崛起的$粮食ETF鹏华(159698)$。</p>
+<p><strong>软件与服务板块最近的反弹，是下行趋势里的一次喘息，还是新周期的开始？</strong>——这是摩根士丹利（大摩）最近很多研报在讨论的话题。</p>
+<p>聊完粮食危机后，我们就跟着讨论下这个。</p>
+<p>刚好先说下这周末<strong>研究正规市场AI应用公司报表后的一些发现：</strong></p>
+<p><strong>①、AI变现开始从设想变成财务数据增长的证据。</strong>越来越多的软件商开始在报表和业绩交流会里公布具体产品和收费路径，不再是画饼。</p>
+<p>②、基础模型的竞争变分散，有利于软件商。越来越多企业开始多模型并用，甚至用开源模型。</p>
+<p>这一点很关键：如果只有一两家前沿模型公司通吃，<strong>价值就全堆在模型层</strong>；但模型变分散后，<strong>价值能在整条技术栈上累积</strong>，手握专有数据、行业场景、工作流和渠道的<strong>应用层软件反而能吃肉</strong>。</p>
+<p>③、软件商之间的并购活动近几个月回暖。</p>
+<p><strong>④、AI支出并没有明显挤掉核心软件需求。</strong>企业2026年整体IT预算增长约3.8%，其中软件是增长最快的类别（约4.1%）。</p>
+<p>大概四成企业的CIO（首席信息官）是用预算内部腾挪来资助AI，<strong>但压力主要集中在非核心业务服务上</strong>，关键业务应用一直稳着的。</p>
+<p>换句话说就是，<strong>创新是要做的，但核心业务还不敢轻易从软件供应商切到纯AI来搞</strong>。</p>
+<p><strong>⑤、AI带来的成本节约主要在非核心外包环节</strong>，传统人力外包的稀缺性在被削弱。</p>
+<p><strong>汇总成结论和心得就是：</strong></p>
+<p>①、办公软件、企业ERP、金融IT、建筑软件等具备行业数据的AI应用商，它们本来就有专有数据和客户工作流，现在用DeepSeek这类便宜模型把AI嵌进产品，成本大降、体验提升。</p>
+<p>大摩对欧股SAP的目标价就从190欧元上调到215欧元。</p>
+<p>微软就不说了，低位起来最高反弹接近50%。</p>
+<p>②、对于A股，<strong>要辨别“软件公司”是“产品型”还是“外包型”</strong>——有数据+工作流+渠道的，才能最大程度受益。</p>
+<p>③、要留意国内一大半叫“软件”的公司，其实是系统集成和人力外包。这种“IT服务”要谨慎，主流机构预计全球IT服务支出只增长约1.8%，远低于软件的4.1%。</p>
+<p>④、对游戏板块来说，AI大幅砍掉游戏的生产成本——美术、代码、本地化、QA、甚至NPC对话都能用AI生成，这意味着同等收入下毛利更高。</p>
+<p>但门槛降低等于竞争者变多，小工作室用AI也能量产像样的内容。</p>
+<p>③和④都意味着，<strong>强者恒强，优势向着头部公司集中</strong>。</p>
+<p>很多国内资金可能就是信奉这一点，导致A股的软件、游戏板块作为整体，前期持续回调，且本轮反弹<strong>一直弱于美股AI应用</strong>。</p>
+<p><strong>但我觉得这并不合理</strong>，更多是A股资金过分情绪化的表现：</p>
+<p>一窝蜂认可某板块的时候，什么意外都能包容；</p>
+<p>一窝蜂撤离某板块的时候，什么瑕疵都会放大。</p>
+<p>最后大家会回过神来发现，国内的公司虽然内卷、虽然没有美国公司那么头部，<strong>但也走势也不该这么不堪——估值会慢慢恢复到正常水平</strong>。</p>
+<p>煤炭板块就是一个案例，2025年7月过度悲观被打压到低位，<strong>接下来的十个月，$煤炭ETF国泰(515220)$大幅反弹60%，同期仅次于半导体</strong>。$黄金股ETF永赢(517520)$当时是冲高回落，到2026年5月时涨幅并没有煤炭多。</p>
+<p>且经过多轮洗盘后，<strong>现在煤炭板块散户资金已经很少了：</strong></p>
+<p><img alt="" src="./images/img_12_1.jpg" /></p>
+<p>同样，根据软件、游戏板块个股半年报的数据，二季度是有很多人抄底的，比如：</p>
+<p>$金山办公(688111) ，二季度股东人数从4.6万增加到5.1万</p>
+<p>$吉比特(603444) ，二季度股东人数从2.5万增加到3.26万。</p>
+<p>但随着7月、8月洗盘力度加大，估计不少人会离场。</p>
+<p>这一轮清洗后，<strong>头部公司也会有一定的估值修复</strong>。</p>
+<p>只是这个过程可能还需要些时间（可能一到两个月） $软件ETF鹏华(560790) $游戏ETF华泰柏瑞(516770) 。</p>
+<p>当然，以上都是基于对正规市场公司研究后的猜想，而<strong>A股常会有自己站在大气层的理解</strong>，最终死活不认这类逻辑也没啥办法——毕竟我们没有教训市场的能力。</p>
+<p>……</p>
+<p>当前聚焦到短线的话，下周预计先是有色、科创新能源、电网设备动起来——<strong>毕竟周五是这三个板块先在低位支撑企稳反弹</strong>。</p>
+<p>$工业有色ETF万家(560860)$、$科创新能源ETF鹏华(588830)$、$电网设备ETF国泰(561380)$这些ETF多留意盘中笔记的图。</p>
+<p>现阶段做短线，风险也要同步提示下——<strong>那就是增量资金始终不多</strong>，一旦上证指数反弹超过3960太多，非散户资金就喜欢借道ETF赎回。</p>
+<p>而散户资金现在勒紧裤腰带，净流入也不算富裕。</p>
+<p><strong>增量资金不够，那就是存量资金博弈，历来难度就会增大</strong>：</p>
+<p><img alt="" src="./images/img_12_2.jpg" /></p>
+<p><strong>而这也会间接影响中线策略</strong>：</p>
+<p>如果一直没有增量资金出现，那上证指数4030点，<strong>可能就是中线资金比较合适减仓的节点。</strong></p>
+<p>如果有，才能对应调高目标。</p>
+<p>收工~</p>
+                </div>
+                <div class="fade-overlay"></div>
+            </div>
+            <div class="card-footer-actions">
+                <button class="btn-toggle-expand" onclick="toggleExpand(12)" id="btn-toggle-12">
+                    <span class="btn-text">阅读完整回答与图表解析</span>
+                </button>
+                <a href="https://www.zhihu.com/question/2074073512084497338" target="_blank" rel="noopener noreferrer" class="btn-zhihu">知乎原问题</a>
+            </div>
+            
+        </div>
+        
+        <div class="dash-card" id="card-13">
+            <div class="dash-card-header">
+                <span class="dash-author-avatar">大</span>
+                <span class="dash-author">大龙刺身</span>
+                <span class="dash-time">· 2026-08-23 21:08:16</span>
+                <span class="dash-votes">赞同 0</span>
+            </div>
+            <h2 class="dash-title">
+                <a href="https://www.zhihu.com/question/2074125939525564224" target="_blank" rel="noopener noreferrer" class="question-link">如何评价2026年8月24日A股行情？</a>
+                <button class="btn-copy" onclick="copyQId('2074125939525564224')">ID: 2074125939525564224</button>
+            </h2>
+            <div class="answer-content-wrapper collapsed" id="content-wrapper-13">
+                <div class="answer-body-content article-content" id="body-13">
+                    <p>——英伟达服务器涨价超15%</p>
+<p>事件本质：HBM高带宽内存成本暴涨，英伟达给AI服务器全面提价15%+，侧面印证算力需求爆棚、供给紧张。</p>
+<ol>
+<li>
+<p>浪潮xx同学：国内AI服务器绝对龙头，英伟达核心战略伙伴，涨价直接向下游传导，业绩弹性全场最大</p>
+</li>
+<li>
+<p>工业fl同学：英伟达AI服务器核心代工厂，单台服务器越贵，代工营收和利润同步水涨船高</p>
+</li>
+<li>
+<p>鸿博gf同学：手握大量英伟达高端GPU算力，新服务器涨价=存量算力资产直接升值，后续租金还能涨</p>
+</li>
+<li>
+<p>通富wd同学：国内HBM先进封装龙头，本次涨价根源就是内存芯片涨价，HBM量价齐升最受益</p>
+</li>
+<li>
+<p>海光xx同学：国产AI芯片龙头，英伟达服务器越贵，国产算力性价比越高，替代进程直接加速</p>
+</li>
+<li>
+<p>拓维xx同学：华为昇腾服务器核心厂商，客户嫌英伟达贵就转单国产，订单需求直接增量</p>
+</li>
+<li>
+<p>澜起kj同学：全球内存接口芯片龙头，AI服务器全面升级HBM/DDR5，量价双升吃满行业红利</p>
+</li>
+<li>
+<p>紫光gf同学：旗下新华三是国内AI服务器头部玩家，深度绑定英伟达，提价顺利传导下游客户</p>
+</li>
+<li>
+<p>中贝tx同学：算力租赁高成长标的，高速扩张GPU集群，服务器涨价带动算力租金上行</p>
+</li>
+<li>
+<p>长电kj同学：全球封测龙头，掌握HBM 3D堆叠封装技术，存储涨价潮下封装需求持续爆发</p>
+</li>
+</ol>
+                </div>
+                <div class="fade-overlay"></div>
+            </div>
+            <div class="card-footer-actions">
+                <button class="btn-toggle-expand" onclick="toggleExpand(13)" id="btn-toggle-13">
+                    <span class="btn-text">阅读完整回答与图表解析</span>
+                </button>
+                <a href="https://www.zhihu.com/question/2074125939525564224" target="_blank" rel="noopener noreferrer" class="btn-zhihu">知乎原问题</a>
+            </div>
+            
+        </div>
+        
+        <div class="dash-card" id="card-14">
+            <div class="dash-card-header">
+                <span class="dash-author-avatar">寻</span>
+                <span class="dash-author">寻找午夜太阳</span>
+                <span class="dash-time">· 2026-08-23 18:30:29</span>
+                <span class="dash-votes">赞同 0</span>
+            </div>
+            <h2 class="dash-title">
+                <a href="https://www.zhihu.com/question/2074125939525564224" target="_blank" rel="noopener noreferrer" class="question-link">如何评价2026年8月24日A股行情？</a>
+                <button class="btn-copy" onclick="copyQId('2074125939525564224')">ID: 2074125939525564224</button>
+            </h2>
+            <div class="answer-content-wrapper collapsed" id="content-wrapper-14">
+                <div class="answer-body-content article-content" id="body-14">
+                    <p>8.24前瞻</p>
+<p>周末消息还是不少的，主要可关注的是英伟达机柜涨价与以钼代钨，以及一些液冷光纤的小作文，不过这些都是利好，会催化的标的网上基本在5-6月都分析完了（液冷可能消息杂一些），就先不赘述了。</p>
+<p>利空方面，国内没有实质性的内容，值得注意的是中信又发了一篇AI文，经典除了提示风险外啥也不做，然而作者竟然挂了5个人的名，令人感慨。</p>
+<p><img alt="" src="./images/img_14_1.jpg" /></p>
+<p>另外，周中提到的小光冲高与大光修复，也在下半周的盘面里一一兑现了，那么如果周一大光继续修复，就会具有良性的带动板块的效应。</p>
+<p>值得一提的是周五盘后北交所唯一的光发了中报，内容可谓大超预期，而根据北交的调性，竞价不大幅高开就是机会。</p>
+<p>此外，上周四五表现好、周末情绪发酵也较为充分的细分领域（譬如PTFE的两个标的周五尾盘冲涨停），需提防早盘高开过多导致的获利盘兑现，买点尽量落在分时回踩企稳之后。</p>
+<p>那么剩下的内容里让我们来聊一聊如何买在量化拉升时。</p>
+<p>众所周知量化的算法很多，对普通投资者而言没有必要猜测具体是哪套算法，更重要的是观察成交结构。</p>
+<ol>
+<li>看逐笔成交而不是只看大单</li>
+</ol>
+<p>量化点火一般不表现为一笔巨额买单直接封板，更常见的情况是短时间内trades里连续出现大量中等规模主动买单，持续吃掉卖一至卖五。</p>
+<p>如果十几秒内成交密度明显提高&amp;卖档不断被消化，同时下方买盘快速补上，那么往往说明主动资金正在加速了。</p>
+<ol>
+<li>板块内部的联动与分化</li>
+</ol>
+<p>容量大的量化通常不会只交易一只股票，而会同时配置同一板块的一篮子标的。</p>
+<p>因此我们会发现核心股突然放量突破后同板块二线标的基本也会快速出现买盘跟随。</p>
+<p>那么如果核心股没有启动，而其他零星标的盘口忽然出现扫单（可能是小资金量化也可能是游资甚至机构），就需要反过来看核心股接下来会不会被带动，因为对量化而言这里存在套利空间，如果是合理的拉盘那么就会同步买入的。</p>
+<ol>
+<li>关注关键价格位置</li>
+</ol>
+<p>VWAP、早盘前15分钟高点、前一日高点等位置往往是短线交易模型重点关注的价格，提前识别这些位置比看到股价突然拉升后再追单更有意义。</p>
+<p>这里尤其需要注意分时量，最好的结果自然是量价齐升，表现为密集的红柱子，只有价格突破而成交没有跟上的持续性往往有限。</p>
+<ol>
+<li>错过日内第一波就等第一次回踩</li>
+</ol>
+<p>如果股价已经在短时间内上涨3%—5%，再直接追高的盈亏比通常并不好，更稳妥的观察方式是等待第一次回踩。</p>
+<p>如果股价回到VWAP附近后没有明显跌破，成交量收缩&amp;抛压减弱，随后重新出现主动买盘，往往比第一波直线拉升时更容易找到合适的交易位置。</p>
+                </div>
+                <div class="fade-overlay"></div>
+            </div>
+            <div class="card-footer-actions">
+                <button class="btn-toggle-expand" onclick="toggleExpand(14)" id="btn-toggle-14">
+                    <span class="btn-text">阅读完整回答与图表解析</span>
+                </button>
+                <a href="https://www.zhihu.com/question/2074125939525564224" target="_blank" rel="noopener noreferrer" class="btn-zhihu">知乎原问题</a>
+            </div>
+            
+        </div>
+        
+        <div class="dash-card" id="card-15">
+            <div class="dash-card-header">
+                <span class="dash-author-avatar">青</span>
+                <span class="dash-author">青锋</span>
+                <span class="dash-time">· 2026-08-23 21:16:19</span>
+                <span class="dash-votes">赞同 0</span>
+            </div>
+            <h2 class="dash-title">
+                <a href="https://www.zhihu.com/question/2074129959245956675" target="_blank" rel="noopener noreferrer" class="question-link">如何看待2026年8月24日A股行情走势？</a>
+                <button class="btn-copy" onclick="copyQId('2074129959245956675')">ID: 2074129959245956675</button>
+            </h2>
+            <div class="answer-content-wrapper collapsed" id="content-wrapper-15">
+                <div class="answer-body-content article-content" id="body-15">
+                    <p>8.23</p>
+<p>周末发酵了科技相关的是英伟达服务器涨价，功率半导体，长存上市加速，和中报中际东山长飞的业绩</p>
+<p>统一说，缩量环境，逻辑好业绩好未必有超额收益的土壤，不管是达链服务器的工业或者功率半导体涨价，亦或者长存国产存储链还是大光，容量都太大，高开性价比都不高。</p>
+<p>和科技相对跷跷板的是医药以及高位情绪，导致哈药成了情绪端影响力最大个股，周五尾盘有资金抢先手翘板，这里要注意能不能走出汉森快速换手封死，神药二次反核，哈药平开附近震荡拉升带领医药轮动的走势，（不意味着适合追涨），短线情绪不单要看医药核心反馈，还得看传智，一鸣这种负反馈能不能停止，或者被承接，周五断板的金米是否有反核或者承接力量，综合评判药是否有接力价值。</p>
+<p>下周感觉指数层面还有下探可能，不放量大阳之前对顺指数容量科技保持一定谨慎，对情绪端要及时去弱留强，控制仓位博弈。</p>
+                </div>
+                <div class="fade-overlay"></div>
+            </div>
+            <div class="card-footer-actions">
+                <button class="btn-toggle-expand" onclick="toggleExpand(15)" id="btn-toggle-15">
+                    <span class="btn-text">阅读完整回答与图表解析</span>
+                </button>
+                <a href="https://www.zhihu.com/question/2074129959245956675" target="_blank" rel="noopener noreferrer" class="btn-zhihu">知乎原问题</a>
+            </div>
+            
+        </div>
+        
+        </div>
+    </div>
+    <script>
+        function copyQId(qId) {
+            if (!qId) return;
+            navigator.clipboard.writeText(qId).then(() => {
+                alert('已复制问题 ID: ' + qId);
+            });
+        }
+
+        function toggleExpand(idx) {
+            const wrapper = document.getElementById('content-wrapper-' + idx);
+            const btn = document.getElementById('btn-toggle-' + idx);
+            if (!wrapper || !btn) return;
+
+            if (wrapper.classList.contains('collapsed')) {
+                wrapper.classList.remove('collapsed');
+                wrapper.classList.add('expanded');
+                btn.querySelector('.btn-text').innerText = '收起回答';
+            } else {
+                wrapper.classList.remove('expanded');
+                wrapper.classList.add('collapsed');
+                btn.querySelector('.btn-text').innerText = '阅读完整回答与图表解析';
+                document.getElementById('card-' + idx).scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function toggleComments(idx) {
+            const list = document.getElementById('comments-list-' + idx);
+            const btn = document.getElementById('btn-toggle-comments-' + idx);
+            if (!list || !btn) return;
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                list.classList.add('expanded');
+                btn.innerText = '收起评论';
+            } else {
+                list.classList.remove('expanded');
+                list.classList.add('collapsed');
+                btn.innerText = '展开评论';
+            }
+        }
+
+        document.addEventListener('mouseover', function(e) {
+            const term = e.target.closest('.inline-note-term');
+            if (!term) return;
+            const tooltip = term.querySelector('.note-tooltip');
+            if (!tooltip) return;
+
+            tooltip.style.left = '50%';
+            tooltip.style.transform = 'translateX(-50%)';
+            tooltip.style.right = 'auto';
+
+            const rect = tooltip.getBoundingClientRect();
+            const padding = 16;
+            if (rect.left < padding) {
+                tooltip.style.left = '0';
+                tooltip.style.transform = 'translateX(0)';
+            } else if (rect.right > window.innerWidth - padding) {
+                tooltip.style.left = 'auto';
+                tooltip.style.right = '0';
+                tooltip.style.transform = 'translateX(0)';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const total = 15;
+            for (let i = 1; i <= total; i++) {
+                const body = document.getElementById('body-' + i);
+                const wrapper = document.getElementById('content-wrapper-' + i);
+                const btn = document.getElementById('btn-toggle-' + i);
+                if (body && wrapper && btn) {
+                    if (body.scrollHeight <= 240) {
+                        wrapper.classList.remove('collapsed');
+                        wrapper.classList.add('expanded');
+                        btn.style.display = 'none';
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
