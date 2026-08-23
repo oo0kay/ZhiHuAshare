@@ -80,11 +80,6 @@ def parse_date_compact(date_str: str | None = None) -> str:
     else:
         dt = datetime.now(tz_beijing)
 
-    if dt.weekday() == 5:  # 周六 -> 周五
-        dt = dt - timedelta(days=1)
-    elif dt.weekday() == 6:  # 周日 -> 周五
-        dt = dt - timedelta(days=2)
-
     return dt.strftime("%Y%m%d")
 
 
@@ -289,8 +284,19 @@ def run_annotation_pipeline(
     daily_out_dir = (out_base_path / date_compact).resolve()
 
     if not daily_out_dir.exists():
-        logger.error(f"找不到输出目录: {daily_out_dir}")
-        sys.exit(1)
+        # 兜底防护：如果指定的日期目录不存在，自动查找 output 目录下最新包含 Markdown 的文件夹
+        recent_dirs = sorted([d for d in out_base_path.glob("20*") if d.is_dir()], key=lambda x: x.name, reverse=True)
+        found_dir = None
+        for d in recent_dirs:
+            if (d / "temp").exists() or list(d.glob("answer_*.md")):
+                found_dir = d
+                break
+        if found_dir:
+            logger.info(f"未直接找到 {daily_out_dir}，自动平滑定位到最新产物目录: {found_dir}")
+            daily_out_dir = found_dir
+        else:
+            logger.error(f"找不到输出目录: {daily_out_dir}")
+            sys.exit(1)
 
     temp_dir = daily_out_dir / "temp"
     search_dir = temp_dir if temp_dir.exists() else daily_out_dir
