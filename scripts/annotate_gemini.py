@@ -269,7 +269,7 @@ def run_annotation_pipeline(
         logger.warning(f"在 {daily_out_dir} (含 temp/ 子目录) 下未找到待批注的 answer_*.md 文件。")
         return
 
-    logger.info(f"找到 {len(md_files)} 个 Markdown 文件准备进行 Gemini 批注...")
+    logger.info(f"找到 {len(md_files)} 个 Markdown 文件，开启 3 线程并发进行 Gemini 批注...")
 
     # 提取全局大盘微背景
     titles = []
@@ -286,11 +286,23 @@ def run_annotation_pipeline(
 
     client = genai.Client(api_key=api_key)
 
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
     success_count = 0
-    for md_file in md_files:
-        ok = annotate_single_markdown(client, md_file, model_name=model_name, market_context=market_context)
-        if ok:
-            success_count += 1
+    max_workers = min(len(md_files), 3)  # 控制 3 线程并发，结合 3 次重试，既极速又不超限
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_to_md = {
+            executor.submit(annotate_single_markdown, client, mf, model_name, market_context): mf
+            for mf in md_files
+        }
+        for future in as_completed(future_to_md):
+            mf = future_to_md[future]
+            try:
+                ok = future.result()
+                if ok:
+                    success_count += 1
+            except Exception as e:
+                logger.error(f"并发处理 {mf.name} 异常: {e}")
 
     logger.info(f"Gemini API 批注完成: {success_count}/{len(md_files)} 个文件成功覆写。")
 
