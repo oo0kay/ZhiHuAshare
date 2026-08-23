@@ -79,6 +79,12 @@ def parse_date_compact(date_str: str | None = None) -> str:
             dt = datetime.now(tz_beijing)
     else:
         dt = datetime.now(tz_beijing)
+
+    if dt.weekday() == 5:  # 周六 -> 周五
+        dt = dt - timedelta(days=1)
+    elif dt.weekday() == 6:  # 周日 -> 周五
+        dt = dt - timedelta(days=2)
+
     return dt.strftime("%Y%m%d")
 
 
@@ -136,42 +142,66 @@ def annotate_single_markdown(
 
         logger.info(f"发送 Gemini 请求分析 {md_filepath.name} (含 {len(loaded_img_names)} 张图片)...")
 
-        response = None
-        for attempt in range(1, 4):
-            try:
-                response = client.models.generate_content(
-                    model=model_name,
-                    contents=contents,
-                    config=types.GenerateContentConfig(
-                        system_instruction=SYSTEM_INSTRUCTION,
-                        response_mime_type="application/json",
-                        response_schema=AnswerAnnotation,
-                        temperature=0.3,
-                    ),
-                )
-                if response and response.text:
-                    break
-            except Exception as e:
-                logger.warning(f"Gemini API 请求尝试 {attempt}/3 失败 ({md_filepath.name}): {e}")
-                import time
-                time.sleep(2 * attempt)
+        # 备用模型降级列表：严格遵循用户指定的降级顺序
+        raw_order = [model_name, "gemini-3.7-flash", "gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.5-flash-lite","gemini-3.1-flash-lite"]
+        candidate_models = []
+        for m in raw_order:
+            if m not in candidate_models:
+                candidate_models.append(m)
 
-        # 若带图片请求失败，尝试降级为纯文本 Prompt 再次请求
+        response = None
+        for current_model in candidate_models:
+            for attempt in range(1, 4):
+                try:
+                    response = client.models.generate_content(
+                        model=current_model,
+                        contents=contents,
+                        config=types.GenerateContentConfig(
+                            system_instruction=SYSTEM_INSTRUCTION,
+                            response_mime_type="application/json",
+                            response_schema=AnswerAnnotation,
+                            temperature=0.3,
+                        ),
+                    )
+                    if response and response.text:
+                        break
+                except Exception as e:
+                    err_msg = str(e)
+                    logger.warning(f"使用 {current_model} 请求尝试 {attempt}/3 失败 ({md_filepath.name}): {err_msg[:120]}")
+                    if "429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg:
+                        wait_match = re.search(r'retry in ([0-9\.]+)s', err_msg, re.IGNORECASE)
+                        wait_sec = float(wait_match.group(1)) + 1.0 if wait_match else 5.0
+                        if wait_sec > 15 or "FreeTier" in err_msg or "limit: 20" in err_msg:
+                            logger.warning(f"模型 {current_model} 触发每日/每分限额 (429)，正在自动切换备用模型...")
+                            break  # 立即切下一个备用模型
+                        import time
+                        time.sleep(wait_sec)
+                    else:
+                        import time
+                        time.sleep(2 * attempt)
+
+            if response and response.text:
+                break
+
+        # 若带图片请求均失败，尝试降级为纯文本 Prompt 再次请求
         if (not response or not response.text) and loaded_img_names:
             logger.warning(f"带图请求失败，正在降级为纯文本 Prompt 再次请求 {md_filepath.name}...")
-            try:
-                response = client.models.generate_content(
-                    model=model_name,
-                    contents=[prompt_text],
-                    config=types.GenerateContentConfig(
-                        system_instruction=SYSTEM_INSTRUCTION,
-                        response_mime_type="application/json",
-                        response_schema=AnswerAnnotation,
-                        temperature=0.3,
-                    ),
-                )
-            except Exception as e:
-                logger.error(f"降级纯文本请求亦失败 {md_filepath.name}: {e}")
+            for fallback_model in candidate_models:
+                try:
+                    response = client.models.generate_content(
+                        model=fallback_model,
+                        contents=[prompt_text],
+                        config=types.GenerateContentConfig(
+                            system_instruction=SYSTEM_INSTRUCTION,
+                            response_mime_type="application/json",
+                            response_schema=AnswerAnnotation,
+                            temperature=0.3,
+                        ),
+                    )
+                    if response and response.text:
+                        break
+                except Exception as e:
+                    logger.error(f"降级纯文本请求 {fallback_model} 失败 {md_filepath.name}: {e}")
 
         if not response or not response.text:
             logger.error(f"Gemini 最终返回空内容: {md_filepath.name}")
