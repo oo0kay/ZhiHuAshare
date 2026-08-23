@@ -58,25 +58,21 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./output
 
-      - name: Step 5 - Send Success WeChat Notification
+      - name: Step 5 - Send Success Bark Notification
         if: success()
         env:
-          SERVERCHAN_SENDKEY: ${{ secrets.SERVERCHAN_SENDKEY }}
-          WXPUSHER_APP_TOKEN: ${{ secrets.WXPUSHER_APP_TOKEN }}
-          WXPUSHER_UIDS: ${{ secrets.WXPUSHER_UIDS }}
-          WXPUSHER_TOPICS: ${{ secrets.WXPUSHER_TOPICS }}
+          BARK_KEY: ${{ secrets.BARK_KEY }}
+          BARK_SERVER: ${{ secrets.BARK_SERVER }}
         run: |
           OWNER="${{ github.repository_owner }}"
           REPO="${{ github.event.repository.name }}"
           PAGES_URL="https://${OWNER}.github.io/${REPO}/"
-          uv run python scripts/notify_wechat.py --status success --pages-url "$PAGES_URL"
+          uv run python scripts/notify_bark.py --status success --pages-url "$PAGES_URL"
 
-      - name: Step 6 - Send Cookie Expiration & Failure Alert to WeChat
+      - name: Step 6 - Send Cookie Expiration & Failure Alert to Bark
         if: failure()
         env:
-          SERVERCHAN_SENDKEY: ${{ secrets.SERVERCHAN_SENDKEY }}
-          WXPUSHER_APP_TOKEN: ${{ secrets.WXPUSHER_APP_TOKEN }}
-          WXPUSHER_UIDS: ${{ secrets.WXPUSHER_UIDS }}
-          WXPUSHER_TOPICS: ${{ secrets.WXPUSHER_TOPICS }}
+          BARK_KEY: ${{ secrets.BARK_KEY }}
+          BARK_SERVER: ${{ secrets.BARK_SERVER }}
         run: |
-          uv run python scripts/notify_wechat.py --status error --error-message "知乎抓取或 Gemini 批注失败。可能 ZHIHU_COOKIE 已过期或接口遭遇限流，请登录 GitHub 仓库更新 ZHIHU_COOKIE Secrets。"
+          uv run python scripts/notify_bark.py --status error --error-message "知乎抓取或 Gemini 批注失败。可能 ZHIHU_COOKIE 已过期或接口遭遇限流，请登录 GitHub 仓库更新 ZHIHU_COOKIE Secrets。"
