@@ -136,19 +136,45 @@ def annotate_single_markdown(
 
         logger.info(f"发送 Gemini 请求分析 {md_filepath.name} (含 {len(loaded_img_names)} 张图片)...")
 
-        response = client.models.generate_content(
-            model=model_name,
-            contents=contents,
-            config=types.GenerateContentConfig(
-                system_instruction=SYSTEM_INSTRUCTION,
-                response_mime_type="application/json",
-                response_schema=AnswerAnnotation,
-                temperature=0.3,
-            ),
-        )
+        response = None
+        for attempt in range(1, 4):
+            try:
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=contents,
+                    config=types.GenerateContentConfig(
+                        system_instruction=SYSTEM_INSTRUCTION,
+                        response_mime_type="application/json",
+                        response_schema=AnswerAnnotation,
+                        temperature=0.3,
+                    ),
+                )
+                if response and response.text:
+                    break
+            except Exception as e:
+                logger.warning(f"Gemini API 请求尝试 {attempt}/3 失败 ({md_filepath.name}): {e}")
+                import time
+                time.sleep(2 * attempt)
 
-        if not response.text:
-            logger.error(f"Gemini 返回空内容: {md_filepath.name}")
+        # 若带图片请求失败，尝试降级为纯文本 Prompt 再次请求
+        if (not response or not response.text) and loaded_img_names:
+            logger.warning(f"带图请求失败，正在降级为纯文本 Prompt 再次请求 {md_filepath.name}...")
+            try:
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=[prompt_text],
+                    config=types.GenerateContentConfig(
+                        system_instruction=SYSTEM_INSTRUCTION,
+                        response_mime_type="application/json",
+                        response_schema=AnswerAnnotation,
+                        temperature=0.3,
+                    ),
+                )
+            except Exception as e:
+                logger.error(f"降级纯文本请求亦失败 {md_filepath.name}: {e}")
+
+        if not response or not response.text:
+            logger.error(f"Gemini 最终返回空内容: {md_filepath.name}")
             return False
 
         annotation_data = json.loads(response.text)
