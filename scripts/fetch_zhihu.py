@@ -102,7 +102,12 @@ def parse_cookie_string(cookie_str: str) -> dict[str, str]:
 def parse_date(date_str=None):
     """
     解析 YYYY-MM-DD 或默认今天日期。
-    返回 datetime 对象, date_iso, date_compact (YYYYMMDD), date_formatted (YYYY年MM月DD日).
+    返回:
+    - dt: 真正的运行目标日期 datetime 对象 (决定落盘目录与页面显示日期，绝不覆盖历史日期)
+    - date_iso: YYYY-MM-DD
+    - date_compact: YYYYMMDD (用于落盘目录，如 20260823)
+    - date_formatted: YYYY年MM月DD日
+    - search_dt: 周末自动向前推算至本周五开盘日（仅用于生成知乎搜索问题的关键词和起始时间戳）
     """
     tz_beijing = timezone(timedelta(hours=8))
     if date_str:
@@ -117,7 +122,17 @@ def parse_date(date_str=None):
     date_compact = dt.strftime("%Y%m%d")
     date_formatted = f"{dt.year}年{dt.month:02d}月{dt.day:02d}日"
     date_iso = dt.strftime("%Y-%m-%d")
-    return dt, date_iso, date_compact, date_formatted
+
+    # 如果是周末（周六/周日），搜索关键词日期推算至本周五
+    search_dt = dt
+    if dt.weekday() == 5:  # 周六 -> 搜索使用本周五
+        search_dt = dt - timedelta(days=1)
+        logger.info(f"运行日期为周六，检索关键词将采用本周五开盘日 ({search_dt.strftime('%Y-%m-%d')})，落盘目录保持为独立日期 {date_compact}")
+    elif dt.weekday() == 6:  # 周日 -> 搜索使用本周五
+        search_dt = dt - timedelta(days=2)
+        logger.info(f"运行日期为周日，检索关键词将采用本周五开盘日 ({search_dt.strftime('%Y-%m-%d')})，落盘目录保持为独立日期 {date_compact}")
+
+    return dt, date_iso, date_compact, date_formatted, search_dt
 
 
 def upgrade_image_url(img_url: str) -> str:
@@ -1695,16 +1710,19 @@ def run_pipeline(
     if enable_file_log:
         setup_file_logging()
 
-    dt, date_iso, date_compact, date_formatted = parse_date(target_date_str)
+    dt, date_iso, date_compact, date_formatted, search_dt = parse_date(target_date_str)
     
     logger.info(f"--- 开始执行知乎 A 股数据抓取任务 ---")
     logger.info(f"工作目录 (CWD): {WORK_DIR}")
-    logger.info(f"目标日期: {date_iso} ({date_compact})")
+    logger.info(f"目标运行与落盘日期: {date_iso} ({date_compact})")
+    if search_dt != dt:
+        logger.info(f"周末非交易日策略：搜索知乎关键词将锚定周五开盘日 ({search_dt.strftime('%Y-%m-%d')})，保持落盘目录为 {date_compact} 独占。")
     
     # 获取授权客户端
     client = get_authenticated_client(raw_cookie)
     
     tz_beijing = timezone(timedelta(hours=8))
+    # 严格锚定运行当天 dt 的 00:00:00（确保周五、周六、周日每天抓取的都是当天 0 点后发表的最新回答，绝不重复）
     target_date_start = datetime(dt.year, dt.month, dt.day, 0, 0, 0, tzinfo=tz_beijing)
     target_start_ts = int(target_date_start.timestamp())
     
@@ -1736,7 +1754,7 @@ def run_pipeline(
         candidate_items.sort(key=lambda x: extract_answer_details(x)["voteup_count"], reverse=True)
         valid_items = candidate_items[:limit]
     else:
-        query = f"如何看待{dt.year}年{dt.month}月{dt.day}日A股"
+        query = f"如何看待{search_dt.year}年{search_dt.month}月{search_dt.day}日A股"
         logger.info(f"搜索关键词发现热门问题池: '{query}' (限制 20 条搜索结果)")
         search_results, error_msg = client.search(query, limit=20, sort_by="default")
         if error_msg:
@@ -1850,7 +1868,7 @@ voteup_count: {details['voteup_count']}
 
 def run_compiler_pipeline(target_date_str: str | None = None, base_output_dir: str = "output"):
     """Compile answer_*.md files into index.html dashboard and cleanup md files."""
-    dt, date_iso, date_compact, date_formatted = parse_date(target_date_str)
+    dt, date_iso, date_compact, date_formatted, _ = parse_date(target_date_str)
 
     out_base_path = Path(base_output_dir) if Path(base_output_dir).is_absolute() else WORK_DIR / base_output_dir
     daily_out_dir = (out_base_path / date_compact).resolve()
