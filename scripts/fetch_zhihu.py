@@ -99,15 +99,27 @@ def parse_cookie_string(cookie_str: str) -> dict[str, str]:
     return result
 
 
+def save_last_error(msg: str, base_output_dir: str = "output"):
+    """记录极简错误原因到 output/last_error.txt 供 Bark 推送准确故障"""
+    try:
+        out_base_path = Path(base_output_dir) if Path(base_output_dir).is_absolute() else WORK_DIR / base_output_dir
+        out_base_path.mkdir(parents=True, exist_ok=True)
+        err_file = out_base_path / "last_error.txt"
+        with open(err_file, "w", encoding="utf-8") as f:
+            f.write(msg)
+    except Exception:
+        pass
+
+
 def parse_date(date_str=None):
     """
     解析 YYYY-MM-DD 或默认今天日期。
     返回:
-    - dt: 真正的运行目标日期 datetime 对象 (决定落盘目录与页面显示日期，绝不覆盖历史日期)
+    - dt: 真正的运行目标日期 datetime 对象 (决定落盘目录与页面显示日期)
     - date_iso: YYYY-MM-DD
-    - date_compact: YYYYMMDD (用于落盘目录，如 20260823)
+    - date_compact: YYYYMMDD (用于落盘目录，如 20260824)
     - date_formatted: YYYY年MM月DD日
-    - search_dt: 周末自动向前推算至本周五开盘日（仅用于生成知乎搜索问题的关键词和起始时间戳）
+    - search_dt: 截至当前运行时间已收盘的上一个完整交易日（用于生成知乎搜索关键词）
     """
     tz_beijing = timezone(timedelta(hours=8))
     if date_str:
@@ -123,14 +135,19 @@ def parse_date(date_str=None):
     date_formatted = f"{dt.year}年{dt.month:02d}月{dt.day:02d}日"
     date_iso = dt.strftime("%Y-%m-%d")
 
-    # 如果是周末（周六/周日），搜索关键词日期推算至本周五
+    # 计算上一个完整已收盘交易日（A股收盘时间为北京时间 15:00）
     search_dt = dt
-    if dt.weekday() == 5:  # 周六 -> 搜索使用本周五
-        search_dt = dt - timedelta(days=1)
-        logger.info(f"运行日期为周六，检索关键词将采用本周五开盘日 ({search_dt.strftime('%Y-%m-%d')})，落盘目录保持为独立日期 {date_compact}")
-    elif dt.weekday() == 6:  # 周日 -> 搜索使用本周五
-        search_dt = dt - timedelta(days=2)
-        logger.info(f"运行日期为周日，检索关键词将采用本周五开盘日 ({search_dt.strftime('%Y-%m-%d')})，落盘目录保持为独立日期 {date_compact}")
+    # 如果今天属于交易日（周一至周五），但当前北京时间还没到 15:00:00，说明今日未收盘，需回溯至前一交易日
+    if search_dt.weekday() < 5 and search_dt.hour < 15:
+        search_dt -= timedelta(days=1)
+        logger.info(f"当前时间为交易日盘中/盘前 ({dt.strftime('%H:%M:%S')} < 15:00)，尚未收盘，检索关键词自动向前回溯 1 天。")
+
+    # 循环向前跳过周六(5)和周日(6)
+    while search_dt.weekday() >= 5:
+        search_dt -= timedelta(days=1)
+
+    if search_dt.strftime("%Y%m%d") != date_compact:
+        logger.info(f"检索关键词定位至上一个完整开盘日 ({search_dt.strftime('%Y-%m-%d')})，落盘目录保持为独立日期 {date_compact}")
 
     return dt, date_iso, date_compact, date_formatted, search_dt
 
@@ -1774,6 +1791,7 @@ def run_pipeline(
         raw_results, error_msg = client.get_question_answers(question_id, limit=limit)
         if error_msg:
             logger.error(f"抓取中断: {error_msg}")
+            save_last_error(f"【Step 1 知乎抓取中断】{error_msg}", base_output_dir)
             client.close()
             return str(daily_out_dir), [], f"抓取失败: {error_msg}"
             
@@ -1790,6 +1808,7 @@ def run_pipeline(
         search_results, error_msg = client.search(query, limit=20, sort_by="default")
         if error_msg:
             logger.error(f"搜索中断: {error_msg}")
+            save_last_error(f"【Step 1 知乎搜索中断】{error_msg}", base_output_dir)
             client.close()
             return str(daily_out_dir), [], f"搜索失败: {error_msg}"
 
