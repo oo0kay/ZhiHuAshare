@@ -1602,7 +1602,10 @@ def generate_index_dashboard(daily_out_dir: Path, articles_meta: list[dict], dat
 <body>
     <div class="container">
         <div class="dash-header">
-            <h1>知乎 A 股热议全景</h1>
+            <div class="dash-header-top">
+                <h1>知乎 A 股热议全景</h1>
+                {history_selector_html}
+            </div>
             <div class="dash-meta">
                 <span>日期：{date_formatted}</span>
                 <span>精选回答：{total_articles} 篇</span>
@@ -1902,7 +1905,14 @@ def run_compiler_pipeline(target_date_str: str | None = None, base_output_dir: s
     daily_out_dir = (out_base_path / date_compact).resolve()
 
     if not daily_out_dir.exists():
-        return str(daily_out_dir), [], f"找不到目录: {daily_out_dir}"
+        recent_dirs = sorted([d for d in out_base_path.glob("20*") if d.is_dir()], key=lambda x: x.name, reverse=True)
+        if recent_dirs:
+            daily_out_dir = recent_dirs[0]
+            date_compact = daily_out_dir.name
+            date_formatted = f"{date_compact[:4]}年{date_compact[4:6]}月{date_compact[6:]}日"
+            logger.info(f"未直接找到 {out_base_path / date_compact}，自动平滑定位到最新输出目录: {daily_out_dir}")
+        else:
+            return str(daily_out_dir), [], f"找不到目录: {daily_out_dir}"
 
     temp_dir = daily_out_dir / "temp"
     md_files = sorted(list(temp_dir.glob("answer_*.md")), key=lambda p: [int(c) if c.isdigit() else c for c in re.split(r'(\d+)', p.name)])
