@@ -83,12 +83,15 @@ jobs:
           ANNOTATE_OUTCOME: ${{ steps.annotate.outcome }}
           COMPILE_OUTCOME: ${{ steps.compile.outcome }}
         run: |
-          ERROR_MSG="工作流未通过。"
-          if [ "$FETCH_OUTCOME" = "failure" ]; then
-            ERROR_MSG="【Step 1 - 知乎抓取失败】可能 ZHIHU_COOKIE 已过期或接口遭遇限流，请检测 Cookie。"
+          if [ -f output/last_error.txt ]; then
+            ERROR_MSG=$(cat output/last_error.txt)
+          elif [ "$FETCH_OUTCOME" = "failure" ]; then
+            ERROR_MSG="Step 1 知乎数据抓取中断"
           elif [ "$ANNOTATE_OUTCOME" = "failure" ]; then
-            ERROR_MSG="【Step 2 - Gemini AI 批注失败】Gemini API Key 可能无效、或请求超出模型每日额度。"
+            ERROR_MSG="Step 2 Gemini AI 批注中断"
           elif [ "$COMPILE_OUTCOME" = "failure" ]; then
-            ERROR_MSG="【Step 3 - HTML 仪表盘编译失败】Markdown 格式解析或 HTML 模板构建异常。"
+            ERROR_MSG="Step 3 HTML 仪表盘编译中断"
+          else
+            ERROR_MSG="工作流运行中断"
           fi
           uv run python scripts/notify_bark.py --status error --error-message "$ERROR_MSG"
