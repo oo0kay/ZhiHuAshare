@@ -137,8 +137,8 @@ def annotate_single_markdown(
 
         logger.info(f"发送 Gemini 请求分析 {md_filepath.name} (含 {len(loaded_img_names)} 张图片)...")
 
-        # 备用模型降级列表：严格遵循用户指定的降级顺序
-        raw_order = [model_name, "gemini-3.7-flash", "gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.5-flash-lite","gemini-3.1-flash-lite"]
+        # 备用模型降级列表：优先使用额度最大的 gemini-3.1-flash-lite
+        raw_order = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-3.6-flash", "gemini-3.7-flash", model_name]
         candidate_models = []
         for m in raw_order:
             if m not in candidate_models:
