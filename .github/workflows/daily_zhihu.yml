@@ -37,6 +37,11 @@ jobs:
         run: |
           uv sync
 
+      - name: Fetch gh-pages metadata for history calendar
+        continue-on-error: true
+        run: |
+          git fetch origin gh-pages:refs/remotes/origin/gh-pages || true
+
       - name: Step 1 - Fetch Zhihu Answers (Top 15 Upvoted)
         id: fetch
         env:
