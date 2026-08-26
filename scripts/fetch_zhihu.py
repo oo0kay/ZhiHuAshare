@@ -1163,15 +1163,36 @@ def generate_index_dashboard(daily_out_dir: Path, articles_meta: list[dict], dat
         </div>
         """
 
-    # 动态构建历史盘后日历下拉菜单
+    # 动态构建历史盘后日历下拉菜单（扫描本地及 GitHub origin/gh-pages 分支已有的历史开盘日）
     base_dir = daily_out_dir.parent
     history_options_html = ""
+    all_dates = set()
+
     if base_dir.exists():
-        for d in sorted([p for p in base_dir.iterdir() if p.is_dir() and re.match(r'^\d{8}$', p.name)], key=lambda x: x.name, reverse=True):
-            d_name = d.name
-            d_fmt = f"{d_name[:4]}年{d_name[4:6]}月{d_name[6:]}日"
-            selected = "selected" if d_name == date_compact else ""
-            history_options_html += f'<option value="{d_name}" {selected}>{d_fmt}</option>'
+        for p in base_dir.iterdir():
+            if p.is_dir() and re.match(r'^\d{8}$', p.name):
+                all_dates.add(p.name)
+
+    try:
+        import subprocess
+        res = subprocess.run(
+            ["git", "ls-tree", "-d", "--name-only", "origin/gh-pages"],
+            capture_output=True, text=True, timeout=5
+        )
+        if res.returncode == 0:
+            for line in res.stdout.splitlines():
+                folder = line.strip()
+                if re.match(r'^\d{8}$', folder):
+                    all_dates.add(folder)
+    except Exception:
+        pass
+
+    all_dates.add(date_compact)
+
+    for d_name in sorted(list(all_dates), reverse=True):
+        d_fmt = f"{d_name[:4]}年{d_name[4:6]}月{d_name[6:]}日"
+        selected = "selected" if d_name == date_compact else ""
+        history_options_html += f'<option value="{d_name}" {selected}>{d_fmt}</option>'
 
     history_selector_html = f"""
     <div class="dash-history-select">
