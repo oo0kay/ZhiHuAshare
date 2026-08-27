@@ -3,7 +3,7 @@ name: Daily Zhihu A-Share Automated Learner & Push
 on:
   schedule:
     # UTC 10:00 = 北京时间 18:00 (每周一至周五)
-    - cron: '0 10 * * 1-5'
+    - cron: '0 10 * * *'
   workflow_dispatch: # 支持 GitHub 网页后台手动点击运行测试
 
 env:
